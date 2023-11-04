@@ -92,7 +92,7 @@ export const Prod = ({
                 />
             )}
             <p className="ml-2">{`-->`}</p>
-            <div className="flex ml-2">
+            <div className="flex ml-2 gap-1">
                 {prod.body.map((item, index) => {
                     return (
                         <div

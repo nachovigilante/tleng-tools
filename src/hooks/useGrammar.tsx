@@ -130,7 +130,7 @@ const calcularSD = (
     const sd = {} as TableType;
 
     P.forEach(({ head, body }) => {
-        const key = `${head} --> ${body.join('')}`;
+        const key = `${head} --> ${body.join(' ')}`;
         const prim = primeros_de(body, primeros);
         if (prim.includes('λ')) prim.push(...siguientes[head]);
         sd[key] = prim.filter((i) => i != 'λ');

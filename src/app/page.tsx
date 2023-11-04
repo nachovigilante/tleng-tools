@@ -3,28 +3,49 @@
 import { Productions } from './Productions';
 import { GrammarProvider } from '~/contexts/GrammarContext';
 import { Languages } from './Languages';
-import useGrammar, { PrimerosType } from '~/hooks/useGrammar';
+import useGrammar, { TableType } from '~/hooks/useGrammar';
 import { useState } from 'react';
 
-const Primeros = () => {
-    const { primeros: calcularPrimeros } = useGrammar();
-    const [primeros, setPrimeros] = useState<PrimerosType>({} as PrimerosType);
+const Tablas = () => {
+    const { primeros: calcularPrimeros, siguientes: calcularSiguientes } =
+        useGrammar();
+    const [primeros, setPrimeros] = useState<TableType>({} as TableType);
+    const [siguientes, setSiguientes] = useState<TableType>({} as TableType);
 
     return (
         <div className="flex flex-col gap-5">
-            <h2 className="text-2xl">Primeros</h2>
-            {primeros &&
-                Object.keys(primeros).map((v) => (
-                    <div key={v}>
-                        <span className="font-bold">{v}:</span>
-                        <span>{primeros[v].join(', ')}</span>
-                    </div>
-                ))}
+            {primeros && siguientes && (
+                <div>
+                    <table className="table-auto text-lg border-collapse">
+                        <thead>
+                            <tr className="bg-blue-500 text-white">
+                                <th className="px-3 py-2 border">Símbolo</th>
+                                <th className="px-3 py-2 border">Primeros</th>
+                                <th className="px-3 py-2 border">Siguientes</th>
+                            </tr>
+                            {Object.keys(siguientes).map((v) => (
+                                <tr key={v}>
+                                    <td className="px-3 py-2 border">{v}</td>
+                                    <td className="px-3 py-2 border">{`{${primeros[
+                                        v
+                                    ].join(', ')}}`}</td>
+                                    <td className="px-3 py-2 border">{`{${siguientes[
+                                        v
+                                    ].join(', ')}}`}</td>
+                                </tr>
+                            ))}
+                        </thead>
+                    </table>
+                </div>
+            )}
             <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={() => setPrimeros(calcularPrimeros())}
+                onClick={() => {
+                    setPrimeros(calcularPrimeros());
+                    setSiguientes(calcularSiguientes());
+                }}
             >
-                Calcular primeros
+                Calcular tabla
             </button>
         </div>
     );
@@ -38,7 +59,7 @@ const Home = () => {
                 <div className="flex flex-col gap-5">
                     <Productions />
                     <Languages />
-                    <Primeros />
+                    <Tablas />
                 </div>
             </main>
         </GrammarProvider>

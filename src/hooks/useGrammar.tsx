@@ -6,6 +6,12 @@ export type TableType = {
     [key: string]: string[];
 };
 
+export type Table2DType = {
+    [key: string]: {
+        [key: string]: string[];
+    };
+};
+
 const calcularPrimeros = (P: ProdType[], Vt: string[], Vn: string[]) => {
     const primeros = {} as TableType;
     Vn.forEach((v) => {
@@ -133,6 +139,26 @@ const calcularSD = (
     return sd;
 };
 
+const calcularLL1 = (
+    P: ProdType[],
+    Vt: string[],
+    Vn: string[],
+    sd: TableType,
+) => {
+    const ll1 = {} as Table2DType;
+
+    Vn.forEach((v) => {
+        ll1[v] = {} as TableType;
+        Vt.concat(['$']).forEach((t) => {
+            ll1[v][t] = Object.keys(sd).filter(
+                (key) => sd[key].includes(t) && key.startsWith(`${v} --> `),
+            );
+        });
+    });
+
+    return ll1;
+};
+
 const useGrammar = () => {
     const {
         prods,
@@ -153,6 +179,7 @@ const useGrammar = () => {
     const [primeros, setPrimeros] = useState<TableType>({} as TableType);
     const [siguientes, setSiguientes] = useState<TableType>({} as TableType);
     const [sd, setSd] = useState<TableType>({} as TableType);
+    const [ll1, setLl1] = useState<Table2DType>({} as Table2DType);
 
     useEffect(() => {
         if (Vn.length == 0 || Vt.length == 0) return;
@@ -172,6 +199,12 @@ const useGrammar = () => {
         if (prods.some((p) => !Vn.includes(p.head))) return;
         setSd(calcularSD(prods, primeros, siguientes));
     }, [siguientes]);
+
+    useEffect(() => {
+        if (Vn.length == 0 || Vt.length == 0) return;
+        if (prods.some((p) => !Vn.includes(p.head))) return;
+        setLl1(calcularLL1(prods, Vt, Vn, sd));
+    }, [sd]);
 
     const exportGrammar = () => {
         const grammar = {
@@ -222,6 +255,7 @@ const useGrammar = () => {
         exportGrammar,
         importGrammar,
         sd,
+        ll1,
     };
 };
 

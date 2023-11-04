@@ -5,13 +5,16 @@ export const SD = () => {
     const { sd } = useGrammar();
 
     return (
-        <div className="flex flex-col gap-5">
-            {sd && (
+        <>
+            {Object.keys(sd).length > 0 && (
                 <div>
+                    <h2 className="text-3xl mb-2">SD</h2>
                     <table className="table-auto text-lg border-collapse">
                         <thead>
                             <tr className="bg-blue-500 text-white">
-                                <th className="px-3 py-2 border">Producciones</th>
+                                <th className="px-3 py-2 border">
+                                    Producciones
+                                </th>
                                 <th className="px-3 py-2 border">SD</th>
                             </tr>
                             {Object.keys(sd).map((v) => (
@@ -30,6 +33,6 @@ export const SD = () => {
                     </table>
                 </div>
             )}
-        </div>
+        </>
     );
 };

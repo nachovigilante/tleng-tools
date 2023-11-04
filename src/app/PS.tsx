@@ -5,9 +5,10 @@ export const PS = () => {
     const { primeros, siguientes } = useGrammar();
 
     return (
-        <div className="flex flex-col gap-5">
-            {primeros && siguientes && (
+        <>
+            {Object.keys(primeros).length > 0 && (
                 <div>
+                    <h2 className="text-3xl mb-2">Primeros y siguientes</h2>
                     <table className="table-auto text-lg border-collapse">
                         <thead>
                             <tr className="bg-blue-500 text-white">
@@ -38,6 +39,6 @@ export const PS = () => {
                     </table>
                 </div>
             )}
-        </div>
+        </>
     );
 };

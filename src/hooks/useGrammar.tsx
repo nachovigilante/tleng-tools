@@ -50,8 +50,10 @@ const calcularPrimeros = (P: ProdType[], Vt: string[], Vn: string[]) => {
 
 const primeros_de = (cadena: string[], primeros: TableType) => {
     let result = [] as string[];
+
     let lambda = true;
     cadena.forEach((v) => {
+        if (v == 'λ') return result.push('λ');
         if (lambda)
             result.push(
                 ...primeros[v].filter((i) => i != 'λ' && !result.includes(i)),
@@ -114,6 +116,23 @@ const calcularSiguientes = (
     return siguientes;
 };
 
+const calcularSD = (
+    P: ProdType[],
+    primeros: TableType,
+    siguientes: TableType,
+) => {
+    const sd = {} as TableType;
+
+    P.forEach(({ head, body }) => {
+        const key = `${head} --> ${body.join('')}`;
+        const prim = primeros_de(body, primeros);
+        if (prim.includes('λ')) prim.push(...siguientes[head]);
+        sd[key] = prim.filter((i) => i != 'λ');
+    });
+
+    return sd;
+};
+
 const useGrammar = () => {
     const {
         prods,
@@ -133,6 +152,7 @@ const useGrammar = () => {
 
     const [primeros, setPrimeros] = useState<TableType>({} as TableType);
     const [siguientes, setSiguientes] = useState<TableType>({} as TableType);
+    const [sd, setSd] = useState<TableType>({} as TableType);
 
     useEffect(() => {
         if (Vn.length == 0 || Vt.length == 0) return;
@@ -142,8 +162,16 @@ const useGrammar = () => {
 
     useEffect(() => {
         if (Vn.length == 0 || Vt.length == 0) return;
+        if (prods.some((p) => !Vn.includes(p.head))) return;
+        // console.log(primeros);
         setSiguientes(calcularSiguientes(prods, Vt, Vn, primeros));
     }, [primeros]);
+
+    useEffect(() => {
+        if (Vn.length == 0 || Vt.length == 0) return;
+        if (prods.some((p) => !Vn.includes(p.head))) return;
+        setSd(calcularSD(prods, primeros, siguientes));
+    }, [siguientes]);
 
     const exportGrammar = () => {
         const grammar = {
@@ -193,6 +221,7 @@ const useGrammar = () => {
         siguientes,
         exportGrammar,
         importGrammar,
+        sd,
     };
 };
 

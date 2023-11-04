@@ -3,8 +3,9 @@
 import { Productions } from './Productions';
 import { GrammarProvider } from '~/contexts/GrammarContext';
 import { Languages } from './Languages';
-import { Tablas } from './Tablas';
+import { PS } from './PS';
 import useGrammar from '~/hooks/useGrammar';
+import { SD } from './SD';
 
 const Export = () => {
     const { exportGrammar } = useGrammar();
@@ -49,7 +50,8 @@ const Home = () => {
                     </button>
                     <Productions />
                     <Languages />
-                    <Tablas />
+                    <PS />
+                    <SD />
                     <Export />
                     <Import />
                 </div>

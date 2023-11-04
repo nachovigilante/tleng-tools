@@ -38,7 +38,15 @@ const Home = () => {
         <GrammarProvider>
             <main className="p-10">
                 <h1 className="text-4xl">Gramática</h1>
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-5 mt-5">
+                    <button
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-fit"
+                        onClick={() => {
+                            navigator.clipboard.writeText('λ');
+                        }}
+                    >
+                        Copiar λ
+                    </button>
                     <Productions />
                     <Languages />
                     <Tablas />

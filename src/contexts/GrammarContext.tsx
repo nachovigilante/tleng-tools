@@ -6,6 +6,7 @@ type GrammarContextType = {
     addProd: (prod: ProdType) => void;
     removeProd: (index: number) => void;
     updateProd: (index: number, prod: ProdType) => void;
+    resetProd: () => void;
     Vn: string[];
     addVn: (symbol: string) => void;
     removeVn: (symbol: string) => void;
@@ -21,6 +22,7 @@ const GrammarContext = createContext({
     addProd: () => {},
     removeProd: () => {},
     updateProd: () => {},
+    resetProd: () => {},
     Vn: [],
     addVn: () => {},
     removeVn: () => {},
@@ -36,7 +38,7 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
         (
             state: ProdType[],
             action: {
-                type: 'add' | 'remove' | 'update';
+                type: 'add' | 'remove' | 'update' | 'reset';
                 payload: { index: number; prod?: ProdType };
             },
         ) => {
@@ -51,6 +53,8 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
                     const newState = [...state];
                     newState[action.payload.index] = action.payload.prod!;
                     return newState;
+                case 'reset':
+                    return [];
                 default:
                     return state;
             }
@@ -68,6 +72,10 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
 
     const updateProd = (index: number, prod: ProdType) => {
         dispatch({ type: 'update', payload: { index, prod } });
+    };
+
+    const resetProd = () => {
+        dispatch({ type: 'reset', payload: { index: -1 } });
     };
 
     const [Vn, dispatchVn] = useReducer(
@@ -157,6 +165,7 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
                 addVt,
                 removeVt,
                 resetVt,
+                resetProd,
             }}
         >
             {children}

@@ -120,6 +120,7 @@ const useGrammar = () => {
         addProd,
         removeProd,
         updateProd,
+        resetProd,
         Vn,
         addVn,
         removeVn,
@@ -166,6 +167,7 @@ const useGrammar = () => {
             const grammar = JSON.parse(reader.result as string);
             resetVn();
             resetVt();
+            resetProd();
             grammar.prods.forEach((p: ProdType) => addProd(p));
             grammar.Vn.forEach((v: string) => addVn(v));
             grammar.Vt.forEach((v: string) => addVt(v));
@@ -178,6 +180,7 @@ const useGrammar = () => {
         addProd,
         removeProd,
         updateProd,
+        resetProd,
         Vn,
         addVn,
         removeVn,

@@ -1,47 +1,47 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Prod, ProdType } from '../components/Prod';
+import { Productions } from './Productions';
+import { GrammarProvider } from '~/contexts/GrammarContext';
+import { Languages } from './Languages';
+import useGrammar, { PrimerosType } from '~/hooks/useGrammar';
+import { useState } from 'react';
 
-const Home = () => {
-    const [prods, setProds] = useState([
-        {
-            head: '',
-            body: [],
-        },
-    ] as ProdType[]);
-
-    const [Vn, setVn] = useState([] as string[]);
-    const [Vt, setVt] = useState([] as string[]);
+const Primeros = () => {
+    const { primeros: calcularPrimeros } = useGrammar();
+    const [primeros, setPrimeros] = useState<PrimerosType>({} as PrimerosType);
 
     return (
-        <main className="p-10">
-            <h2 className="text-2xl">Gramática</h2>
-            <div className="border rounded-lg flex flex-col w-[300px] p-4 text-xl mt-5">
-                <button>
-                    {prods.map((_, index) => {
-                        return (
-                            <Prod
-                                key={index}
-                                updateProd={(prod: ProdType) => {
-                                    const newProds = [...prods];
-                                    newProds[index] = prod;
-                                    setProds(newProds);
-                                }}
-                            />
-                        );
-                    })}
-                    <p
-                        className="text-center bg-gray-200 border border-gray-300 rounded-md mt-5"
-                        onClick={() => {
-                            setProds([...prods, { head: '', body: [] }]);
-                        }}
-                    >
-                        +
-                    </p>
-                </button>
-            </div>
-        </main>
+        <div className="flex flex-col gap-5">
+            <h2 className="text-2xl">Primeros</h2>
+            {primeros &&
+                Object.keys(primeros).map((v) => (
+                    <div key={v}>
+                        <span className="font-bold">{v}:</span>
+                        <span>{primeros[v].join(', ')}</span>
+                    </div>
+                ))}
+            <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => setPrimeros(calcularPrimeros())}
+            >
+                Calcular primeros
+            </button>
+        </div>
+    );
+};
+
+const Home = () => {
+    return (
+        <GrammarProvider>
+            <main className="p-10">
+                <h1 className="text-4xl">Gramática</h1>
+                <div className="flex flex-col gap-5">
+                    <Productions />
+                    <Languages />
+                    <Primeros />
+                </div>
+            </main>
+        </GrammarProvider>
     );
 };
 

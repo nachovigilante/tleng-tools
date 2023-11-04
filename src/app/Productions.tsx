@@ -9,13 +9,14 @@ export const Productions = () => {
         <div className="border rounded-lg flex flex-col w-[300px] p-4 text-xl mt-5 gap-5">
             {prods.length > 0 && (
                 <div className="flex flex-col gap-2">
-                    {prods.map((_, index) => {
+                    {prods.map((p, index) => {
                         return (
                             <Prod
                                 key={index}
                                 updateProd={(prod: ProdType) =>
                                     updateProd(index, prod)
                                 }
+                                prod={p}
                             />
                         );
                     })}

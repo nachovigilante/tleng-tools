@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ProdType } from '~/components/Prod';
 import GrammarContext from '~/contexts/GrammarContext';
 
@@ -130,8 +130,48 @@ const useGrammar = () => {
         resetVt,
     } = useContext(GrammarContext);
 
-    const primeros = () => calcularPrimeros(prods, Vt, Vn);
-    const siguientes = () => calcularSiguientes(prods, Vt, Vn, primeros());
+    const [primeros, setPrimeros] = useState<TableType>({} as TableType);
+    const [siguientes, setSiguientes] = useState<TableType>({} as TableType);
+
+    useEffect(() => {
+        if (Vn.length == 0 || Vt.length == 0) return;
+        if (prods.some((p) => !Vn.includes(p.head))) return;
+        setPrimeros(calcularPrimeros(prods, Vt, Vn));
+    }, [prods, Vt, Vn]);
+
+    useEffect(() => {
+        if (Vn.length == 0 || Vt.length == 0) return;
+        setSiguientes(calcularSiguientes(prods, Vt, Vn, primeros));
+    }, [primeros]);
+
+    const exportGrammar = () => {
+        const grammar = {
+            prods,
+            Vn,
+            Vt,
+        };
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(
+            new Blob([JSON.stringify(grammar)], {
+                type: 'application/json',
+            }),
+        );
+        a.download = 'grammar.json';
+        a.click();
+    };
+
+    const importGrammar = (file: File) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const grammar = JSON.parse(reader.result as string);
+            resetVn();
+            resetVt();
+            grammar.prods.forEach((p: ProdType) => addProd(p));
+            grammar.Vn.forEach((v: string) => addVn(v));
+            grammar.Vt.forEach((v: string) => addVt(v));
+        };
+        reader.readAsText(file);
+    };
 
     return {
         prods,
@@ -148,6 +188,8 @@ const useGrammar = () => {
         resetVt,
         primeros,
         siguientes,
+        exportGrammar,
+        importGrammar,
     };
 };
 

@@ -8,12 +8,14 @@ export type ProdType = {
 };
 
 export const Prod = ({
+    prod,
     updateProd,
 }: {
+    prod: ProdType;
     updateProd: (prod: ProdType) => void;
 }) => {
-    const [head, setHead] = useState('');
-    const [editingHead, setEditingHead] = useState(true);
+    const [head, setHead] = useState(prod.head);
+    const [editingHead, setEditingHead] = useState(prod.head === '');
     const headRef = useRef<HTMLInputElement>(null);
     const [body, dispatch] = useReducer(
         (
@@ -34,7 +36,7 @@ export const Prod = ({
                     return state;
             }
         },
-        [] as string[],
+        prod.body,
     );
 
     const addBody = (value: string) => {
@@ -74,7 +76,7 @@ export const Prod = ({
                         setEditingHead(true);
                     }}
                 >
-                    {head}
+                    {prod.head}
                 </p>
             ) : (
                 <input
@@ -91,7 +93,7 @@ export const Prod = ({
             )}
             <p className="ml-2">{`-->`}</p>
             <div className="flex ml-2">
-                {body.map((item, index) => {
+                {prod.body.map((item, index) => {
                     return (
                         <div
                             key={index}

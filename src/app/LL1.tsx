@@ -1,4 +1,5 @@
 'use client';
+import { twMerge } from 'tailwind-merge';
 import useGrammar from '~/hooks/useGrammar';
 
 export const LL1 = () => {
@@ -30,7 +31,13 @@ export const LL1 = () => {
                                     <td className="px-3 py-2 border">{v}</td>
                                     {Vt.concat('$').map((t) => (
                                         <td
-                                            className="px-3 py-2 border"
+                                            className={twMerge(
+                                                'px-3 py-2 border',
+                                                ll1[v] &&
+                                                    ll1[v][t] &&
+                                                    ll1[v][t].length > 1 &&
+                                                    'bg-red-300',
+                                            )}
                                             key={t}
                                         >
                                             {ll1[v] &&

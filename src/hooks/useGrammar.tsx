@@ -20,6 +20,7 @@ const calcularPrimeros = (P: ProdType[], Vt: string[], Vn: string[]) => {
     Vt.forEach((v) => {
         primeros[v] = [v];
     });
+    primeros['λ'] = ['λ'];
 
     let primeros_prev = JSON.parse(JSON.stringify(primeros)) as TableType;
 
@@ -33,6 +34,11 @@ const calcularPrimeros = (P: ProdType[], Vt: string[], Vn: string[]) => {
                         primeros[prod.head].push('λ');
                     return;
                 }
+                if (!primeros[v]) return;
+                console.log('----------------------------');
+                console.log(`'${v}'`);
+                console.log(v, primeros[v]);
+                console.log('----------------------------');
                 if (lambda)
                     primeros[prod.head].push(
                         ...primeros[v].filter(
@@ -60,6 +66,7 @@ const primeros_de = (cadena: string[], primeros: TableType) => {
     let lambda = true;
     cadena.forEach((v) => {
         if (v == 'λ') return result.push('λ');
+        if (!primeros[v]) return;
         if (lambda)
             result.push(
                 ...primeros[v].filter((i) => i != 'λ' && !result.includes(i)),
@@ -180,6 +187,10 @@ const useGrammar = () => {
     const [siguientes, setSiguientes] = useState<TableType>({} as TableType);
     const [sd, setSd] = useState<TableType>({} as TableType);
     const [ll1, setLl1] = useState<Table2DType>({} as Table2DType);
+
+    useEffect(() => {
+        prods.forEach((p) => {});
+    }, [prods]);
 
     useEffect(() => {
         if (Vn.length == 0 || Vt.length == 0) return;

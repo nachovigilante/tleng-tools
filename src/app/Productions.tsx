@@ -6,7 +6,7 @@ export const Productions = () => {
     const { prods, addProd, removeProd, updateProd } = useGrammar();
 
     return (
-        <div className="border rounded-lg flex flex-col w-[300px] p-4 text-xl gap-5">
+        <div className="border rounded-lg flex flex-col w-[400px] p-4 text-xl gap-5">
             {prods.length > 0 && (
                 <div className="flex flex-col gap-2">
                     {prods.map((p, index) => {

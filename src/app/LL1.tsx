@@ -5,12 +5,6 @@ import useGrammar from '~/hooks/useGrammar';
 export const LL1 = () => {
     const { ll1, Vt, Vn } = useGrammar();
 
-    Vn.map((v) => {
-        Vt.concat('$').map((t) => {
-            if (ll1[v]) console.log(v, ',', t, ll1[v][t]);
-        });
-    });
-
     return (
         <>
             {Object.keys(ll1).length > 0 && (
@@ -41,6 +35,7 @@ export const LL1 = () => {
                                             key={t}
                                         >
                                             {ll1[v] &&
+                                                ll1[v][t] &&
                                                 ll1[v][t].map((p) => (
                                                     <p key={p}>{p}</p>
                                                 ))}

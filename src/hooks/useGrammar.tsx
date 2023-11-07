@@ -35,10 +35,6 @@ const calcularPrimeros = (P: ProdType[], Vt: string[], Vn: string[]) => {
                     return;
                 }
                 if (!primeros[v]) return;
-                console.log('----------------------------');
-                console.log(`'${v}'`);
-                console.log(v, primeros[v]);
-                console.log('----------------------------');
                 if (lambda)
                     primeros[prod.head].push(
                         ...primeros[v].filter(
@@ -189,7 +185,25 @@ const useGrammar = () => {
     const [ll1, setLl1] = useState<Table2DType>({} as Table2DType);
 
     useEffect(() => {
-        prods.forEach((p) => {});
+        resetVn();
+        resetVt();
+
+        const newVn = [] as string[];
+        const newVt = [] as string[];
+        prods.forEach((p) => {
+            if (!newVn.includes(p.head)) newVn.push(p.head);
+        });
+        prods.forEach((p) => {
+            p.body.forEach((v) => {
+                if (!newVn.includes(v) && !newVt.includes(v)) newVt.push(v);
+            });
+        });
+
+        newVn.sort();
+        newVt.sort();
+
+        newVn.forEach((v) => addVn(v));
+        newVt.forEach((v) => addVt(v));
     }, [prods]);
 
     useEffect(() => {

@@ -22,7 +22,8 @@ export const PS = () => {
                                     <td className="px-3 py-2 border">
                                         <div className="flex items-center">
                                             <p className="text-3xl">{`{`}</p>
-                                            {primeros[v].join(', ')}
+                                            {primeros[v] &&
+                                                primeros[v].join(', ')}
                                             <p className="text-3xl">{`}`}</p>
                                         </div>
                                     </td>

@@ -150,6 +150,10 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
         dispatchVt({ type: 'reset', payload: { symbol: '' } });
     };
 
+    // useEffect(() => {
+    //     console.log('prods', prods);
+    // }, [prods]);
+
     return (
         <GrammarContext.Provider
             value={{

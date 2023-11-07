@@ -17,58 +17,13 @@ export const Prod = ({
     const [head, setHead] = useState(prod.head);
     const [editingHead, setEditingHead] = useState(prod.head === '');
     const headRef = useRef<HTMLInputElement>(null);
-    const [body, dispatch] = useReducer(
-        (
-            state: string[],
-            action: { type: 'add' | 'edit'; value: string; index: number },
-        ) => {
-            switch (action.type) {
-                case 'add':
-                    return [...state, action.value];
-                case 'edit':
-                    return state.map((item, index) => {
-                        if (index === action.index) {
-                            return action.value;
-                        }
-                        return item;
-                    });
-                default:
-                    return state;
-            }
-        },
-        prod.body,
-    );
-
-    const addBody = (value: string) => {
-        dispatch({
-            type: 'add',
-            value,
-            index: 0,
-        });
-    };
-
-    const editBody = (index: number, value: string) => {
-        dispatch({
-            type: 'edit',
-            value,
-            index,
-        });
-    };
+    const [body, setBody] = useState(prod.body.join(' ') || '');
 
     const [editingBody, setEditingBody] = useState(false);
-    const [editingBodyIndex, setEditingBodyIndex] = useState(0);
-    const [editingBodyValue, setEditingBodyValue] = useState('');
     const bodyRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        updateProd({
-            head,
-            body,
-        });
-    }, [head, body]);
-
     return (
-        <div className="flex items-center h-10">
+        <div className="flex items-center h-10 gap-2">
             {!editingHead ? (
                 <p
                     className="cursor-pointer"
@@ -87,64 +42,64 @@ export const Prod = ({
                         setHead(e.currentTarget.value);
                         if (e.key === 'Enter') {
                             setEditingHead(false);
+                            updateProd({
+                                head,
+                                body: body
+                                    .split(' ')
+                                    .filter((item) => item !== ''),
+                            });
                         }
                     }}
                 />
             )}
-            <p className="ml-2">{`-->`}</p>
-            <div className="flex ml-2 gap-1">
-                {prod.body.map((item, index) => {
-                    return (
-                        <div
-                            key={index}
-                            className="flex items-center cursor-pointer"
-                            onClick={() => {
-                                setEditingBody(true);
-                                setEditingBodyIndex(index);
-                                setEditingBodyValue(item);
-                            }}
-                        >
-                            <p>{item}</p>
-                        </div>
-                    );
-                })}
+            <p className="w-[28px]">{`-->`}</p>
+            <div className="flex gap-1">
+                {!editingBody &&
+                    prod.body.map((item, index) => {
+                        return (
+                            <div
+                                key={index}
+                                className="flex items-center cursor-pointer"
+                                onClick={() => {
+                                    setEditingBody(true);
+                                }}
+                            >
+                                <p>{item}</p>
+                            </div>
+                        );
+                    })}
                 <input
                     ref={bodyRef}
                     className={twMerge(
-                        'border rounded-md p-1 px-2 w-8 ml-2',
+                        'border rounded-md p-1 px-2 flex-grow',
                         editingBody ? 'block' : 'hidden',
                     )}
                     type="text"
                     onChange={(e) => {
-                        setEditingBodyValue(e.currentTarget.value);
+                        setBody(e.currentTarget.value);
                     }}
                     onKeyUp={(e) => {
                         if (e.key === 'Enter') {
                             setEditingBody(false);
-                            if (editingBodyIndex === -1) {
-                                addBody(e.currentTarget.value);
-                            } else {
-                                editBody(
-                                    editingBodyIndex,
-                                    e.currentTarget.value,
-                                );
-                            }
-                            setEditingBodyIndex(0);
-                            setEditingBodyValue('');
+                            updateProd({
+                                head,
+                                body: body
+                                    .split(' ')
+                                    .filter((item) => item !== ''),
+                            });
                         }
                     }}
-                    value={editingBodyValue}
+                    value={body}
                 />
                 {!editingBody && (
                     <button
-                        className="ml-2 text-xl p-1 border border-gray-400 rounded-md bg-gray-200 w-8 h-8 flex items-center justify-center"
+                        className="ml-2 text-lg px-2 py-1 border border-gray-400 rounded-md bg-gray-20 h-8 flex items-center justify-center"
                         onClick={() => {
-                            setEditingBodyIndex(-1);
                             bodyRef.current?.select();
                             setEditingBody(true);
                         }}
                     >
-                        +
+                        Editar
                     </button>
                 )}
             </div>

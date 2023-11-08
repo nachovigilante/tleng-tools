@@ -48,8 +48,6 @@ const showAction = (action: ActionType) => {
 const LR0 = () => {
     const { LR0, calcularTablaLR0, Vt, Vn } = useGrammar();
 
-    console.log(LR0[8])
-
     return (
         <>
             <button

@@ -201,7 +201,8 @@ const calcularClausuraItem = (item: ItemType, prods: ProdType[]) => {
                         (r) =>
                             r.prod.head === new_item.prod.head &&
                             r.prod.body.join(' ') ===
-                                new_item.prod.body.join(' '),
+                                new_item.prod.body.join(' ') &&
+                            r.index == new_item.index,
                     )
                 )
                     result.push(new_item);
@@ -223,10 +224,17 @@ const calcularClausuraConjItems = (items: ItemType[], prods: ProdType[]) => {
                 !result.some(
                     (r) =>
                         r.prod.head === i.prod.head &&
-                        r.prod.body.join(' ') === i.prod.body.join(' '),
+                        r.prod.body.join(' ') === i.prod.body.join(' ') &&
+                        r.index === i.index,
                 )
-            )
+            ) {
                 result.push(i);
+            } else {
+                console.log('No se agrego a');
+                showItem(i);
+                console.log('porque ya estaba en');
+                result.forEach((r) => showItem(r));
+            }
         });
     });
     return result;
@@ -344,9 +352,11 @@ const calcularTablaAccion = (
 
     estados.forEach((estado, i) => {
         table[i] = {};
-        Vt.concat(['$']).concat(Vn).forEach((v) => {
-            table[i][v] = [];
-        });
+        Vt.concat(['$'])
+            .concat(Vn)
+            .forEach((v) => {
+                table[i][v] = [];
+            });
 
         estado.forEach((item) => {
             if (item.index === item.prod.body.length) {
@@ -355,9 +365,9 @@ const calcularTablaAccion = (
                         accion: 'accept',
                     });
                 } else {
-                    const reduceSymbols = SLR ? siguientes[item.prod.head] : Vt.concat(["$"]);
-                    console.log(item.prod.head);
-                    console.log(reduceSymbols);
+                    const reduceSymbols = SLR
+                        ? siguientes[item.prod.head]
+                        : Vt.concat(['$']);
                     reduceSymbols.forEach((v) => {
                         table[i][v].push({
                             accion: 'reduce',
@@ -476,8 +486,6 @@ const useGrammar = () => {
         setTrans(goTo);
     };
 
-    
-
     const calcularTablaLR0 = () => {
         const [afd, trans] = AFD(prods, Vt, Vn);
         setLR0(calcularTablaAccion(prods, Vt, Vn, afd, trans, siguientes));
@@ -487,7 +495,9 @@ const useGrammar = () => {
         const [afd, trans] = AFD(prods, Vt, Vn);
         const primeros = calcularPrimeros(prods, Vt, Vn);
         const siguientes = calcularSiguientes(prods, Vt, Vn, primeros);
-        setSLR(calcularTablaAccion(prods, Vt, Vn, afd, trans, siguientes, true));
+        setSLR(
+            calcularTablaAccion(prods, Vt, Vn, afd, trans, siguientes, true),
+        );
     };
 
     const exportGrammar = () => {
@@ -546,7 +556,7 @@ const useGrammar = () => {
         calcularTablaLR0,
         LR0,
         calcularTablaSLR,
-        SLR
+        SLR,
     };
 };
 

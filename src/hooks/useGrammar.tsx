@@ -325,7 +325,7 @@ export type ActionType =
           accion: 'accept';
       };
 
-type ActionTableType = {
+export type ActionTableType = {
     [key: number]: {
         [key: string]: ActionType[];
     };
@@ -337,6 +337,8 @@ const calcularTablaAccion = (
     Vn: string[],
     estados: ItemType[][],
     goTo: TransType,
+    siguientes: TableType = {} as TableType,
+    SLR: boolean = false,
 ) => {
     const table = {} as ActionTableType;
 
@@ -353,10 +355,10 @@ const calcularTablaAccion = (
                         accion: 'accept',
                     });
                 } else {
-                    if (i === 8) {
-                        showItem(item);
-                    }
-                    Vt.concat(['$']).forEach((v) => {
+                    const reduceSymbols = SLR ? siguientes[item.prod.head] : Vt.concat(["$"]);
+                    console.log(item.prod.head);
+                    console.log(reduceSymbols);
+                    reduceSymbols.forEach((v) => {
                         table[i][v].push({
                             accion: 'reduce',
                             payload: item.prod,
@@ -419,6 +421,7 @@ const useGrammar = () => {
     const [afd, setAfd] = useState<ItemType[][]>([] as ItemType[][]);
     const [trans, setTrans] = useState<TransType>({} as TransType);
     const [LR0, setLR0] = useState<ActionTableType>({} as ActionTableType);
+    const [SLR, setSLR] = useState<ActionTableType>({} as ActionTableType);
 
     useEffect(() => {
         resetVn();
@@ -434,9 +437,6 @@ const useGrammar = () => {
                 if (!newVn.includes(v) && !newVt.includes(v)) newVt.push(v);
             });
         });
-
-        newVn.sort();
-        newVt.sort();
 
         newVn.forEach((v) => addVn(v));
         newVt.forEach((v) => addVt(v));
@@ -476,9 +476,18 @@ const useGrammar = () => {
         setTrans(goTo);
     };
 
+    
+
     const calcularTablaLR0 = () => {
         const [afd, trans] = AFD(prods, Vt, Vn);
-        setLR0(calcularTablaAccion(prods, Vt, Vn, afd, trans));
+        setLR0(calcularTablaAccion(prods, Vt, Vn, afd, trans, siguientes));
+    };
+
+    const calcularTablaSLR = () => {
+        const [afd, trans] = AFD(prods, Vt, Vn);
+        const primeros = calcularPrimeros(prods, Vt, Vn);
+        const siguientes = calcularSiguientes(prods, Vt, Vn, primeros);
+        setSLR(calcularTablaAccion(prods, Vt, Vn, afd, trans, siguientes, true));
     };
 
     const exportGrammar = () => {
@@ -536,6 +545,8 @@ const useGrammar = () => {
         trans,
         calcularTablaLR0,
         LR0,
+        calcularTablaSLR,
+        SLR
     };
 };
 

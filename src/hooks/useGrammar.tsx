@@ -361,45 +361,107 @@ const calcularTablaAccion = (
         estado.forEach((item) => {
             if (item.index === item.prod.body.length) {
                 if (item.prod.head === prods[0].head) {
-                    table[i]['$'].push({
+                    const accion = {
                         accion: 'accept',
-                    });
+                    } as ActionType;
+
+                    if (table[i]['$'].some((a) => a.accion === 'accept'))
+                        return;
+
+                    table[i]['$'].push(accion);
                 } else {
                     const reduceSymbols = SLR
                         ? siguientes[item.prod.head]
                         : Vt.concat(['$']);
+
+                    const accion = {
+                        accion: 'reduce',
+                        payload: item.prod,
+                    } as ActionType;
+
                     reduceSymbols.forEach((v) => {
-                        table[i][v].push({
-                            accion: 'reduce',
-                            payload: item.prod,
-                        });
+                        if (
+                            table[i][v].some(
+                                (a) =>
+                                    a.accion === 'reduce' &&
+                                    a.payload.head === item.prod.head &&
+                                    a.payload.body.join(' ') ===
+                                        item.prod.body.join(' '),
+                            )
+                        )
+                            return;
+
+                        table[i][v].push(accion);
                     });
                 }
             }
             const next = item.prod.body[item.index];
             if (next === 'λ') {
                 if (item.prod.head === prods[0].head) {
-                    table[i]['$'].push({
+                    const accion = {
                         accion: 'accept',
-                    });
+                    } as ActionType;
+
+                    if (table[i]['$'].some((a) => a.accion === 'accept'))
+                        return;
+
+                    table[i]['$'].push(accion);
                 } else {
-                    table[i][item.prod.head].push({
+                    const reduceSymbols = SLR
+                        ? siguientes[item.prod.head]
+                        : Vt.concat(['$']);
+
+                    const accion = {
                         accion: 'reduce',
                         payload: item.prod,
+                    } as ActionType;
+
+                    reduceSymbols.forEach((v) => {
+                        if (
+                            table[i][v].some(
+                                (a) =>
+                                    a.accion === 'reduce' &&
+                                    a.payload.head === item.prod.head &&
+                                    a.payload.body.join(' ') ===
+                                        item.prod.body.join(' '),
+                            )
+                        )
+                            return;
+
+                        table[i][v].push(accion);
                     });
                 }
             }
             if (Vt.includes(next)) {
-                table[i][next].push({
+                const accion = {
                     accion: 'shift',
                     payload: goTo[i][next],
-                });
+                } as ActionType;
+
+                if (
+                    table[i][next].some(
+                        (a) =>
+                            a.accion === 'shift' && a.payload === goTo[i][next],
+                    )
+                )
+                    return;
+
+                table[i][next].push(accion);
             }
             if (Vn.includes(next)) {
-                table[i][next].push({
+                const accion = {
                     accion: 'goto',
                     payload: goTo[i][next],
-                });
+                } as ActionType;
+
+                if (
+                    table[i][next].some(
+                        (a) => a.accion === 'goto' && a.payload === goTo[i][next],
+                    )
+                )
+                    return;
+
+                table[i][next].push(accion);
             }
         });
     });

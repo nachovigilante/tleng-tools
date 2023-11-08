@@ -142,12 +142,7 @@ const calcularSD = (
     return sd;
 };
 
-const calcularLL1 = (
-    P: ProdType[],
-    Vt: string[],
-    Vn: string[],
-    sd: TableType,
-) => {
+const calcularLL1 = (Vt: string[], Vn: string[], sd: TableType) => {
     const ll1 = {} as Table2DType;
 
     Vn.forEach((v) => {
@@ -160,6 +155,160 @@ const calcularLL1 = (
     });
 
     return ll1;
+};
+
+export type ItemType = {
+    prod: ProdType;
+    index: number;
+};
+
+export type TransType = {
+    [key: string]: {
+        [key: string]: number;
+    };
+};
+
+const showItem = (item: ItemType) => {
+    console.log(
+        item.prod.head,
+        '-->',
+        item.prod.body.map((b, i) => (i == item.index ? `·${b}` : b)).join(' '),
+        item.index == item.prod.body.length ? '·' : '',
+    );
+};
+
+const calcularClausuraItem = (item: ItemType, prods: ProdType[]) => {
+    const {
+        prod: { head, body },
+        index,
+    } = item;
+    const result = [item] as ItemType[];
+    const next = body[index];
+    if (index == body.length || next == 'λ') return result;
+
+    let prev_result = JSON.parse(JSON.stringify(result)) as ItemType[];
+
+    do {
+        result.forEach((i) => {
+            prods.forEach((p) => {
+                if (p.head != i.prod.body[i.index]) return;
+                const new_item = {
+                    prod: p,
+                    index: 0,
+                } as ItemType;
+                if (
+                    !result.some(
+                        (r) =>
+                            r.prod.head === new_item.prod.head &&
+                            r.prod.body.join(' ') ===
+                                new_item.prod.body.join(' '),
+                    )
+                )
+                    result.push(new_item);
+            });
+        });
+    } while (
+        prev_result.length != result.length &&
+        (prev_result = JSON.parse(JSON.stringify(result)) as ItemType[])
+    );
+    return result;
+};
+
+const calcularClausuraConjItems = (items: ItemType[], prods: ProdType[]) => {
+    const result = [] as ItemType[];
+    items.forEach((item) => {
+        const cl = calcularClausuraItem(item, prods);
+        cl.forEach((i) => {
+            if (
+                !result.some(
+                    (r) =>
+                        r.prod.head === i.prod.head &&
+                        r.prod.body.join(' ') === i.prod.body.join(' '),
+                )
+            )
+                result.push(i);
+        });
+    });
+    return result;
+};
+
+const calcularTransicion = (
+    items: ItemType[],
+    simbolo: string,
+    prods: ProdType[],
+) => {
+    const result = [] as ItemType[];
+    items.forEach((item) => {
+        const { prod, index } = item;
+        if (index == prod.body.length) return;
+        if (prod.body[index] == simbolo)
+            result.push({
+                prod,
+                index: index + 1,
+            } as ItemType);
+    });
+    return calcularClausuraConjItems(result, prods);
+};
+
+const AFD = (
+    prods: ProdType[],
+    Vt: string[],
+    Vn: string[],
+): [
+    ItemType[][],
+    {
+        [key: string]: {
+            [key: string]: number;
+        };
+    },
+] => {
+    const estados = [] as ItemType[][];
+    const goTo = {} as TransType;
+    goTo[0] = {};
+
+    const inicial = calcularClausuraItem(
+        {
+            prod: prods[0],
+            index: 0,
+        } as ItemType,
+        prods,
+    );
+
+    estados.push(inicial);
+
+    let prev_estados = JSON.parse(JSON.stringify(estados)) as ItemType[][];
+
+    do {
+        estados.forEach((estado) => {
+            Vn.concat(Vt).forEach((simbolo) => {
+                const transicion = calcularTransicion(estado, simbolo, prods);
+                if (
+                    !estados.some((e) =>
+                        e.every(
+                            (i) =>
+                                transicion.some(
+                                    (t) =>
+                                        t.prod.head === i.prod.head &&
+                                        t.prod.body.join(' ') ===
+                                            i.prod.body.join(' ') &&
+                                        t.index == i.index,
+                                ) && transicion.length == e.length,
+                        ),
+                    ) &&
+                    transicion.length > 0
+                ) {
+                    estados.push(transicion);
+                    goTo[estados.length - 1] = {};
+                    goTo[estados.indexOf(estado)][simbolo] = estados.length - 1;
+                }
+            });
+        });
+    } while (
+        prev_estados.length != estados.length &&
+        (prev_estados = JSON.parse(JSON.stringify(estados)) as ItemType[][])
+    );
+
+    return [estados, goTo];
 };
 
 const useGrammar = () => {
@@ -183,6 +332,8 @@ const useGrammar = () => {
     const [siguientes, setSiguientes] = useState<TableType>({} as TableType);
     const [sd, setSd] = useState<TableType>({} as TableType);
     const [ll1, setLl1] = useState<Table2DType>({} as Table2DType);
+    const [afd, setAfd] = useState<ItemType[][]>([] as ItemType[][]);
+    const [trans, setTrans] = useState<TransType>({} as TransType);
 
     useEffect(() => {
         resetVn();
@@ -204,6 +355,9 @@ const useGrammar = () => {
 
         newVn.forEach((v) => addVn(v));
         newVt.forEach((v) => addVt(v));
+
+        if (prods.some((p) => !Vn.includes(p.head)) || prods.length === 0)
+            return;
     }, [prods]);
 
     useEffect(() => {
@@ -215,7 +369,6 @@ const useGrammar = () => {
     useEffect(() => {
         if (Vn.length == 0 || Vt.length == 0) return;
         if (prods.some((p) => !Vn.includes(p.head))) return;
-        // console.log(primeros);
         setSiguientes(calcularSiguientes(prods, Vt, Vn, primeros));
     }, [primeros]);
 
@@ -228,8 +381,15 @@ const useGrammar = () => {
     useEffect(() => {
         if (Vn.length == 0 || Vt.length == 0) return;
         if (prods.some((p) => !Vn.includes(p.head))) return;
-        setLl1(calcularLL1(prods, Vt, Vn, sd));
+        setLl1(calcularLL1(Vt, Vn, sd));
     }, [sd]);
+
+    const calcularAFD = () => {
+        const [afd, goTo] = AFD(prods, Vt, Vn);
+
+        setAfd(afd);
+        setTrans(goTo);
+    };
 
     const exportGrammar = () => {
         const grammar = {
@@ -281,6 +441,9 @@ const useGrammar = () => {
         importGrammar,
         sd,
         ll1,
+        afd,
+        calcularAFD,
+        trans,
     };
 };
 

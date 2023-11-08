@@ -7,6 +7,7 @@ import { PS } from './PS';
 import useGrammar from '~/hooks/useGrammar';
 import { SD } from './SD';
 import { LL1 } from './LL1';
+import { Afd } from './Afd';
 
 const Export = () => {
     const { exportGrammar } = useGrammar();
@@ -51,6 +52,7 @@ const Home = () => {
                     </button>
                     <Productions />
                     <Languages />
+                    <Afd />
                     <PS />
                     <SD />
                     <LL1 />

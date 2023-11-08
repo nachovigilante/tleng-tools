@@ -168,7 +168,7 @@ export type TransType = {
     };
 };
 
-const showItem = (item: ItemType) => {
+export const showItem = (item: ItemType) => {
     console.log(
         item.prod.head,
         '-->',
@@ -282,24 +282,25 @@ const AFD = (
         estados.forEach((estado) => {
             Vn.concat(Vt).forEach((simbolo) => {
                 const transicion = calcularTransicion(estado, simbolo, prods);
-                if (
-                    !estados.some((e) =>
-                        e.every(
-                            (i) =>
-                                transicion.some(
-                                    (t) =>
-                                        t.prod.head === i.prod.head &&
-                                        t.prod.body.join(' ') ===
-                                            i.prod.body.join(' ') &&
-                                        t.index == i.index,
-                                ) && transicion.length == e.length,
-                        ),
-                    ) &&
-                    transicion.length > 0
-                ) {
+                const sigEstado = estados.findIndex((e) =>
+                    e.every(
+                        (i) =>
+                            transicion.some(
+                                (t) =>
+                                    t.prod.head === i.prod.head &&
+                                    t.prod.body.join(' ') ===
+                                        i.prod.body.join(' ') &&
+                                    t.index == i.index,
+                            ) && transicion.length == e.length,
+                    ),
+                );
+                if (transicion.length == 0) return;
+                if (sigEstado === -1) {
                     estados.push(transicion);
                     goTo[estados.length - 1] = {};
                     goTo[estados.indexOf(estado)][simbolo] = estados.length - 1;
+                } else {
+                    goTo[estados.indexOf(estado)][simbolo] = sigEstado;
                 }
             });
         });
@@ -309,6 +310,89 @@ const AFD = (
     );
 
     return [estados, goTo];
+};
+
+export type ActionType =
+    | {
+          accion: 'shift' | 'goto';
+          payload: number;
+      }
+    | {
+          accion: 'reduce';
+          payload: ProdType;
+      }
+    | {
+          accion: 'accept';
+      };
+
+type ActionTableType = {
+    [key: number]: {
+        [key: string]: ActionType[];
+    };
+};
+
+const calcularTablaAccion = (
+    prods: ProdType[],
+    Vt: string[],
+    Vn: string[],
+    estados: ItemType[][],
+    goTo: TransType,
+) => {
+    const table = {} as ActionTableType;
+
+    estados.forEach((estado, i) => {
+        table[i] = {};
+        Vt.concat(['$']).concat(Vn).forEach((v) => {
+            table[i][v] = [];
+        });
+
+        estado.forEach((item) => {
+            if (item.index === item.prod.body.length) {
+                if (item.prod.head === prods[0].head) {
+                    table[i]['$'].push({
+                        accion: 'accept',
+                    });
+                } else {
+                    if (i === 8) {
+                        showItem(item);
+                    }
+                    Vt.concat(['$']).forEach((v) => {
+                        table[i][v].push({
+                            accion: 'reduce',
+                            payload: item.prod,
+                        });
+                    });
+                }
+            }
+            const next = item.prod.body[item.index];
+            if (next === 'λ') {
+                if (item.prod.head === prods[0].head) {
+                    table[i]['$'].push({
+                        accion: 'accept',
+                    });
+                } else {
+                    table[i][item.prod.head].push({
+                        accion: 'reduce',
+                        payload: item.prod,
+                    });
+                }
+            }
+            if (Vt.includes(next)) {
+                table[i][next].push({
+                    accion: 'shift',
+                    payload: goTo[i][next],
+                });
+            }
+            if (Vn.includes(next)) {
+                table[i][next].push({
+                    accion: 'goto',
+                    payload: goTo[i][next],
+                });
+            }
+        });
+    });
+
+    return table;
 };
 
 const useGrammar = () => {
@@ -334,6 +418,7 @@ const useGrammar = () => {
     const [ll1, setLl1] = useState<Table2DType>({} as Table2DType);
     const [afd, setAfd] = useState<ItemType[][]>([] as ItemType[][]);
     const [trans, setTrans] = useState<TransType>({} as TransType);
+    const [LR0, setLR0] = useState<ActionTableType>({} as ActionTableType);
 
     useEffect(() => {
         resetVn();
@@ -391,6 +476,11 @@ const useGrammar = () => {
         setTrans(goTo);
     };
 
+    const calcularTablaLR0 = () => {
+        const [afd, trans] = AFD(prods, Vt, Vn);
+        setLR0(calcularTablaAccion(prods, Vt, Vn, afd, trans));
+    };
+
     const exportGrammar = () => {
         const grammar = {
             prods,
@@ -444,6 +534,8 @@ const useGrammar = () => {
         afd,
         calcularAFD,
         trans,
+        calcularTablaLR0,
+        LR0,
     };
 };
 

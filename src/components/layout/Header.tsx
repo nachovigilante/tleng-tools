@@ -1,19 +1,49 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { twMerge } from 'tailwind-merge';
 
 const Header = () => {
+    const pathname = usePathname();
+
     return (
         <header className="flex items-center justify-between py-3 px-8">
             <h1 className="text-4xl font-bold">(TT)*</h1>
             <nav>
-                <ul className="flex gap-5">
+                <ul className="flex gap-2 text-xl font-semibold text-gray-400">
                     <li>
-                        <Link href="/">Home</Link>
+                        <Link
+                            className={twMerge(
+                                'py-2 px-3 rounded-lg hover:bg-gray-200/70 transition-all duration-150',
+                                pathname === '/' && 'text-black',
+                            )}
+                            href="/"
+                        >
+                            Gramática
+                        </Link>
                     </li>
                     <li>
-                        <Link href="/ll1">LL1</Link>
+                        <Link
+                            className={twMerge(
+                                'py-2 px-3 rounded-lg hover:bg-gray-200/70 transition-all duration-150',
+                                pathname === '/ll1' && 'text-black',
+                            )}
+                            href="/ll1"
+                        >
+                            LL1
+                        </Link>
                     </li>
                     <li>
-                        <Link href="/lr">LR</Link>
+                        <Link
+                            className={twMerge(
+                                'py-2 px-3 rounded-lg hover:bg-gray-200/70 transition-all duration-150',
+                                pathname === '/lr' && 'text-black',
+                            )}
+                            href="/lr"
+                        >
+                            LR
+                        </Link>
                     </li>
                 </ul>
             </nav>

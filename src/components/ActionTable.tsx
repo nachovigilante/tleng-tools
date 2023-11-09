@@ -1,7 +1,10 @@
 'use client';
-import useGrammar, { ActionTableType, ActionType } from '~/hooks/useGrammar';
+import useGrammar from '~/hooks/useGrammar';
 import { twMerge } from 'tailwind-merge';
 import { useEffect, useState } from 'react';
+import { ActionTableType, ActionType } from '~/utils/LR';
+import useLR0 from '~/hooks/useLR0';
+import useSLR from '~/hooks/useSLR';
 
 export const showAction = (action: ActionType) => {
     if (action.accion === 'shift') return `s(${action.payload})`;
@@ -11,8 +14,9 @@ export const showAction = (action: ActionType) => {
 };
 
 export const LR0 = () => {
-    const { LR0, calcularTablaLR0, Vt, Vn, SLR, calcularTablaSLR } =
-        useGrammar();
+    const { Vt } = useGrammar();
+    const { calcularLR0, LR0 } = useLR0();
+    const { calcularSLR, SLR } = useSLR();
 
     const [tabla, setTabla] = useState({} as ActionTableType);
     const [estado, setEstado] = useState(0);
@@ -27,7 +31,7 @@ export const LR0 = () => {
             <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-fit"
                 onClick={() => {
-                    calcularTablaLR0();
+                    calcularLR0();
                     setEstado(0);
                 }}
             >
@@ -36,7 +40,7 @@ export const LR0 = () => {
             <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-fit"
                 onClick={() => {
-                    calcularTablaSLR();
+                    calcularSLR();
                     setEstado(1);
                 }}
             >

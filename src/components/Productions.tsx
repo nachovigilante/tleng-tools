@@ -1,5 +1,5 @@
 'use client';
-import { Prod, ProdType } from '../components/Prod';
+import { Prod, ProdType } from './Prod';
 import useGrammar from '~/hooks/useGrammar';
 
 export const Productions = () => {

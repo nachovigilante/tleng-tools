@@ -1,9 +1,12 @@
 'use client';
 import { twMerge } from 'tailwind-merge';
+import { Grammar } from '~/contexts/GrammarContext';
 import useGrammar from '~/hooks/useGrammar';
+import useLL1 from '~/hooks/useLL1';
 
 export const LL1 = () => {
-    const { ll1, Vt, Vn } = useGrammar();
+    const { Vt, Vn } = useGrammar();
+    const { ll1 } = useLL1();
 
     return (
         <>

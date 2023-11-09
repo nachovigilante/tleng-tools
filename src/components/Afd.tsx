@@ -1,8 +1,9 @@
 'use client';
-import useGrammar from '~/hooks/useGrammar';
+
+import useLR from '~/hooks/useLR';
 
 export const Afd = () => {
-    const { calcularAFD, afd, trans } = useGrammar();
+    const { calcularAFD, afd, trans } = useLR();
 
     return (
         <div>

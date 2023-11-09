@@ -1,15 +1,14 @@
 'use client';
 
-import { Productions } from './Productions';
+import { Productions } from '../components/Productions';
 import { GrammarProvider } from '~/contexts/GrammarContext';
-import { Languages } from './Languages';
-import { PS } from './PS';
-import useGrammar, { ItemType, showItem } from '~/hooks/useGrammar';
-import { SD } from './SD';
-import { LL1 } from './LL1';
-import { Afd } from './Afd';
-import { ProdType } from '~/components/Prod';
-import { LR0 } from './ActionTable';
+import { Languages } from '../components/Languages';
+import { PS } from '../components/PS';
+import useGrammar from '~/hooks/useGrammar';
+import { SD } from '../components/SD';
+import { LL1 } from '../components/LL1';
+import { Afd } from '../components/Afd';
+import { LR0 } from '../components/ActionTable';
 
 const Export = () => {
     const { exportGrammar } = useGrammar();

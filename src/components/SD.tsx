@@ -1,8 +1,8 @@
 'use client';
-import useGrammar from '~/hooks/useGrammar';
+import useLL1 from '~/hooks/useLL1';
 
 export const SD = () => {
-    const { sd } = useGrammar();
+    const { sd } = useLL1();
 
     return (
         <>

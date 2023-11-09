@@ -1,7 +1,8 @@
-import { ReactNode, createContext, useEffect, useReducer } from 'react';
+import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useReducer, useState } from 'react';
 import { ProdType } from '~/components/Prod';
+import { TableType } from '~/utils/ps';
 
-type GrammarContextType = {
+export type Grammar = {
     prods: ProdType[];
     addProd: (prod: ProdType) => void;
     removeProd: (index: number) => void;
@@ -15,6 +16,10 @@ type GrammarContextType = {
     addVt: (symbol: string) => void;
     removeVt: (symbol: string) => void;
     resetVt: () => void;
+    primeros: TableType;
+    siguientes: TableType;
+    setPrimeros: Dispatch<SetStateAction<TableType>>;
+    setSiguientes: Dispatch<SetStateAction<TableType>>;
 };
 
 const GrammarContext = createContext({
@@ -31,7 +36,11 @@ const GrammarContext = createContext({
     addVt: () => {},
     removeVt: () => {},
     resetVt: () => {},
-} as GrammarContextType);
+    primeros: {} as TableType,
+    siguientes: {} as TableType,
+    setPrimeros: () => {},
+    setSiguientes: () => {},
+} as Grammar);
 
 export const GrammarProvider = ({ children }: { children: ReactNode }) => {
     const [prods, dispatch] = useReducer(
@@ -150,9 +159,8 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
         dispatchVt({ type: 'reset', payload: { symbol: '' } });
     };
 
-    // useEffect(() => {
-    //     console.log('prods', prods);
-    // }, [prods]);
+    const [primeros, setPrimeros] = useState<TableType>({} as TableType);
+    const [siguientes, setSiguientes] = useState<TableType>({} as TableType);
 
     return (
         <GrammarContext.Provider
@@ -170,6 +178,10 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
                 removeVt,
                 resetVt,
                 resetProd,
+                primeros,
+                siguientes,
+                setPrimeros,
+                setSiguientes,
             }}
         >
             {children}

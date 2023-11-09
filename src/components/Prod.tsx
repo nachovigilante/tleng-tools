@@ -93,13 +93,13 @@ export const Prod = ({
                 />
                 {!editingBody && (
                     <button
-                        className="ml-2 text-lg px-2 py-1 border border-gray-400 rounded-md bg-gray-20 h-8 flex items-center justify-center"
+                        className="ml-2 p-2 flex items-center justify-center bg-transparent hover:bg-gray-200 border"
                         onClick={() => {
                             bodyRef.current?.select();
                             setEditingBody(true);
                         }}
                     >
-                        Editar
+                        <img src="/assets/edit.svg" alt="" className="h-4"/>
                     </button>
                 )}
             </div>

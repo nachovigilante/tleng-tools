@@ -1,5 +1,5 @@
 'use client';
-import { Prod, ProdType } from '../components/Prod';
+import { Prod, ProdType } from './Prod';
 import useGrammar from '~/hooks/useGrammar';
 
 export const Productions = () => {
@@ -7,6 +7,15 @@ export const Productions = () => {
 
     return (
         <div className="border rounded-lg flex flex-col w-[400px] p-4 text-xl gap-5">
+            <button
+                className="flex items-center gap-2 self-end absolute"
+                onClick={() => {
+                    navigator.clipboard.writeText('λ');
+                }}
+            >
+                <img src="/assets/copy.svg" alt="" className="h-5"/>
+                λ
+            </button>
             {prods.length > 0 && (
                 <div className="flex flex-col gap-2">
                     {prods.map((p, index) => {
@@ -23,10 +32,10 @@ export const Productions = () => {
                 </div>
             )}
             <button
-                className="text-center bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 active:bg-gray-400"
+                className="text-center text-2xl w-full flex justify-center"
                 onClick={() => addProd({ head: '', body: [] })}
             >
-                +
+                <img src="/assets/add.svg" alt="" className="h-8" />
             </button>
         </div>
     );

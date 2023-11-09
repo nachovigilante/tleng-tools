@@ -40,31 +40,17 @@ const Language = ({
                     <p className="ml-2">{`= {`}</p>
                     {language.map((v, index) => {
                         return (
-                            <div key={index} className="flex items-center">
+                            <div key={index} className="flex items-center font-mono text-gray-400">
                                 <p>{v}</p>
-                                {language.length - 1 !== index && <p className="mr-1">,</p>}
+                                {language.length - 1 !== index && (
+                                    <p className="mr-1 font-sans text-black font-semibold">,</p>
+                                )}
                             </div>
                         );
                     })}
                     <p>{`}`}</p>
                 </div>
             )}
-            <button
-                className="text-base bg-gray-200 py-1 px-2 rounded-md"
-                onClick={() => {
-                    if (editting) {
-                        reset();
-                        edittingValue.split(',').forEach((v) => {
-                            add(v);
-                        });
-                    } else {
-                        setEdittingValue(language.join(','));
-                    }
-                    setEditting((s) => !s);
-                }}
-            >
-                {editting ? 'Guardar' : 'Editar'}
-            </button>
         </div>
     );
 };
@@ -73,7 +59,8 @@ export const Languages = () => {
     const { Vn, Vt, addVn, addVt, resetVn, resetVt } = useGrammar();
 
     return (
-        <div className="flex flex-col text-xl gap-3">
+        <div className="flex flex-col text-2xl gap-3">
+            <h2 className="text-3xl mb-2">Símbolos</h2>
             <Language language={Vn} add={addVn} reset={resetVn} id="N" />
             <Language language={Vt} add={addVt} reset={resetVt} id="T" />
         </div>

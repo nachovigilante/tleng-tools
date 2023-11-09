@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { ActionTableType, ActionType } from '~/utils/LR';
 import useLR0 from '~/hooks/useLR0';
 import useSLR from '~/hooks/useSLR';
+import useLR from '~/hooks/useLR';
+import { ErrorMsg } from './layout/ErrorMsg';
 
 export const showAction = (action: ActionType) => {
     if (action.accion === 'shift') return `s(${action.payload})`;
@@ -15,24 +17,36 @@ export const showAction = (action: ActionType) => {
 
 export const LR = () => {
     const { Vt } = useGrammar();
-    const { calcularLR0, LR0 } = useLR0();
-    const { calcularSLR, SLR } = useSLR();
+    const { LR0, SLR } = useLR();
 
     const [tabla, setTabla] = useState({} as ActionTableType);
-    const [estado, setEstado] = useState(0);
+    const [isSLR, setIsSLR] = useState(false);
 
     useEffect(() => {
-        if (estado === 0) setTabla(LR0);
+        if (!isSLR) setTabla(LR0);
         else setTabla(SLR);
-    }, [estado, LR0, SLR]);
+    }, [isSLR, LR0, SLR]);
 
     return (
         <>
-            {tabla && Object.values(tabla).length > 0 && (
-                <>
-                    <h2 className="text-2xl font-semibold">
-                        {estado ? 'Tabla de acción SLR' : 'Tabla de acción LR0'}
-                    </h2>
+            {tabla && Object.values(tabla).length > 0 ? (
+                <div className="flex flex-col gap-10">
+                    <div className="flex items-center gap-3">
+                        <h2 className="text-2xl font-semibold">
+                            {isSLR
+                                ? 'Tabla de acción SLR(1)'
+                                : 'Tabla de acción LR(0)'}
+                        </h2>
+                        <button
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-fit"
+                            onClick={() => {
+                                setIsSLR((s) => !s);
+                            }}
+                        >
+                            {isSLR ? 'LR(0)' : 'SLR(1)'}
+                        </button>
+                    </div>
+
                     <table className="table-auto">
                         <thead>
                             <tr>
@@ -86,28 +100,10 @@ export const LR = () => {
                             ))}
                         </tbody>
                     </table>
-                </>
+                </div>
+            ) : (
+                <ErrorMsg title="No se puede calcular las tablas para LR :(" />
             )}
-            <div className="flex items-center gap-3">
-                <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-fit"
-                    onClick={() => {
-                        calcularLR0();
-                        setEstado(0);
-                    }}
-                >
-                    Calcular LR0
-                </button>
-                <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-fit"
-                    onClick={() => {
-                        calcularSLR();
-                        setEstado(1);
-                    }}
-                >
-                    Calcular SLR
-                </button>
-            </div>
         </>
     );
 };

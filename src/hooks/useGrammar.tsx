@@ -78,21 +78,18 @@ const useGrammar = () => {
     const {
         prods,
         addProd,
-        removeProd,
-        updateProd,
         resetProd,
         Vn,
         addVn,
-        removeVn,
         resetVn,
         Vt,
         addVt,
-        removeVt,
         resetVt,
         primeros,
         siguientes,
         setPrimeros,
         setSiguientes,
+        ...rest
     } = useContext(GrammarContext);
 
     useEffect(() => {
@@ -179,22 +176,19 @@ const useGrammar = () => {
     return {
         prods,
         addProd,
-        removeProd,
-        updateProd,
         resetProd,
         Vn,
         addVn,
-        removeVn,
         resetVn,
         Vt,
         addVt,
-        removeVt,
         resetVt,
         primeros,
         siguientes,
         exportGrammar,
         importGrammar,
         parse,
+        ...rest,
     };
 };
 

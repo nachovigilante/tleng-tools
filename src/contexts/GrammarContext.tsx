@@ -1,5 +1,13 @@
-import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useReducer, useState } from 'react';
+import {
+    Dispatch,
+    ReactNode,
+    SetStateAction,
+    createContext,
+    useReducer,
+    useState,
+} from 'react';
 import { ProdType } from '~/components/Prod';
+import { ActionTableType, ItemType, TransType } from '~/utils/LR';
 import { TableType } from '~/utils/ps';
 
 export type Grammar = {
@@ -20,6 +28,14 @@ export type Grammar = {
     siguientes: TableType;
     setPrimeros: Dispatch<SetStateAction<TableType>>;
     setSiguientes: Dispatch<SetStateAction<TableType>>;
+    afd: ItemType[][];
+    trans: TransType;
+    LR0: ActionTableType;
+    SLR: ActionTableType;
+    setAfd: Dispatch<SetStateAction<ItemType[][]>>;
+    setTrans: Dispatch<SetStateAction<TransType>>;
+    setLR0: Dispatch<SetStateAction<ActionTableType>>;
+    setSLR: Dispatch<SetStateAction<ActionTableType>>;
 };
 
 const GrammarContext = createContext({
@@ -40,6 +56,14 @@ const GrammarContext = createContext({
     siguientes: {} as TableType,
     setPrimeros: () => {},
     setSiguientes: () => {},
+    afd: [] as ItemType[][],
+    trans: {} as TransType,
+    LR0: {} as ActionTableType,
+    SLR: {} as ActionTableType,
+    setAfd: () => {},
+    setTrans: () => {},
+    setLR0: () => {},
+    setSLR: () => {},
 } as Grammar);
 
 export const GrammarProvider = ({ children }: { children: ReactNode }) => {
@@ -68,7 +92,12 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
                     return state;
             }
         },
-        [] as ProdType[],
+        [
+            {
+                head: '',
+                body: [],
+            },
+        ] as ProdType[],
     );
 
     const addProd = (prod: ProdType) => {
@@ -161,6 +190,10 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
 
     const [primeros, setPrimeros] = useState<TableType>({} as TableType);
     const [siguientes, setSiguientes] = useState<TableType>({} as TableType);
+    const [afd, setAfd] = useState<ItemType[][]>([] as ItemType[][]);
+    const [trans, setTrans] = useState<TransType>({} as TransType);
+    const [LR0, setLR0] = useState<ActionTableType>({} as ActionTableType);
+    const [SLR, setSLR] = useState<ActionTableType>({} as ActionTableType);
 
     return (
         <GrammarContext.Provider
@@ -182,6 +215,14 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
                 siguientes,
                 setPrimeros,
                 setSiguientes,
+                afd,
+                trans,
+                LR0,
+                SLR,
+                setAfd,
+                setTrans,
+                setLR0,
+                setSLR,
             }}
         >
             {children}

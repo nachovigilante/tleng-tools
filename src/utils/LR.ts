@@ -7,7 +7,7 @@ export type ItemType = {
 };
 
 export type TransType = {
-    [key: string]: {
+    [key: number]: {
         [key: string]: number;
     };
 };

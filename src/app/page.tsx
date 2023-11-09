@@ -53,7 +53,7 @@ const Home = () => {
         <main className="p-10">
             <h1 className="text-4xl">Gramática</h1>
             <div className="flex flex-wrap gap-10 mt-5">
-                <div className="flex flex-col gap-5 justify-center">
+                <div className="flex flex-col gap-5">
                     <Productions />
                     <div className="flex items-center gap-5 justify-center">
                         <Export />

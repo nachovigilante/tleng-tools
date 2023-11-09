@@ -1,19 +1,16 @@
 'use client';
 
+import { twMerge } from 'tailwind-merge';
+import useGrammar from '~/hooks/useGrammar';
 import useLR from '~/hooks/useLR';
 
 export const Afd = () => {
-    const { calcularAFD, afd, trans } = useLR();
+    const { afd, trans } = useLR();
+    const { Vn, Vt } = useGrammar();
 
     return (
         <div>
-            <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={calcularAFD}
-            >
-                Calcular AFD
-            </button>
-            {afd && (
+            {afd.length > 0 && (
                 <>
                     <h2 className="text-xl font-semibold mt-5">Estados</h2>
 
@@ -47,48 +44,47 @@ export const Afd = () => {
                     </div>
                     <h2 className="text-xl font-semibold mt-5">Transiciones</h2>
                     <div className="flex flex-wrap gap-5 mt-5 items-start">
-                        {Object.values(trans).map((item, index) => (
+                        <table className="table-auto">
+                            <thead>
+                                <th className="px-4 py-2 border bg-blue-500 text-white">
+                                    Estado
+                                </th>
+                                {Vn.concat(Vt).map((v, i) => (
+                                    <th
+                                        className="px-4 py-2 border bg-blue-500 text-white"
+                                        key={i}
+                                    >
+                                        {v}
+                                    </th>
+                                ))}
+                            </thead>
+                            <tbody>
+                                {Object.values(trans).map((item, index) => (
+                                    <tr key={index}>
+                                        <td className="border px-4 py-2 text-center">
+                                            {index}
+                                        </td>
+                                        {Vn.concat(Vt).map((v, i) => (
+                                            <td
+                                                className={twMerge(
+                                                    'border px-4 py-2 text-center',
+                                                    !item[v] && 'bg-gray-100',
+                                                 )}
+                                                key={i}
+                                            >
+                                                {item[v] ?? '-'}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {/* {Object.entries(trans).map((item, index) => (
                             <div
                                 key={index}
                                 className="border rounded-lg p-3 text-lg w-fit"
-                            >
-                                <h2 className="text-xl font-semibold">
-                                    Estado {index}
-                                </h2>
-                                {Object.values(item).length > 0 ? (
-                                    <table className="table-auto mt-2">
-                                        <thead>
-                                            <tr>
-                                                <th className="px-4 py-2 border">
-                                                    Simbolo
-                                                </th>
-                                                <th className="px-4 py-2 border">
-                                                    Estado
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {Object.entries(item).map(
-                                                ([key, value]) => (
-                                                    <tr key={key}>
-                                                        <td className="border px-4 py-2">
-                                                            {key}
-                                                        </td>
-                                                        <td className="border px-4 py-2">
-                                                            {value}
-                                                        </td>
-                                                    </tr>
-                                                ),
-                                            )}
-                                        </tbody>
-                                    </table>
-                                ) : (
-                                    <div className="text-lg mt-2">
-                                        No tiene transiciones
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                            ></div>
+                        ))} */}
                     </div>
                 </>
             )}

@@ -2,6 +2,7 @@
 import { twMerge } from 'tailwind-merge';
 import useGrammar from '~/hooks/useGrammar';
 import useLL1 from '~/hooks/useLL1';
+import { ErrorMsg } from './layout/ErrorMsg';
 
 export const LL1 = () => {
     const { Vt, Vn } = useGrammar();
@@ -9,7 +10,7 @@ export const LL1 = () => {
 
     return (
         <>
-            {Object.keys(ll1).length > 0 && (
+            {Object.keys(ll1).length > 0 ? (
                 <div>
                     <h2 className="text-3xl mb-2">LL1</h2>
                     <table className="table-auto text-lg border-collapse">
@@ -48,6 +49,8 @@ export const LL1 = () => {
                         </thead>
                     </table>
                 </div>
+            ) : (
+                <ErrorMsg title="No se puede calcular las tablas para LL(1) :(" />
             )}
         </>
     );

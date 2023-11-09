@@ -2,3 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+table {
+    @apply table-auto;
+}
+
+table th,
+table td {
+    @apply px-4 py-2 border;
+}
+
+table th {
+    @apply bg-blue-500 text-white;
+}
+
+button {
+    @apply bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-lg w-fit;
+}

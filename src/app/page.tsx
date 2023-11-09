@@ -8,7 +8,7 @@ import useGrammar from '~/hooks/useGrammar';
 import { SD } from '../components/SD';
 import { LL1 } from '../components/LL1';
 import { Afd } from '../components/Afd';
-import { LR0 } from '../components/ActionTable';
+import { LR0 } from '../components/LR';
 
 const Export = () => {
     const { exportGrammar } = useGrammar();

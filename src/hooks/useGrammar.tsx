@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { ProdType } from '~/components/Prod';
 import GrammarContext from '~/contexts/GrammarContext';
 
@@ -456,7 +456,8 @@ const calcularTablaAccion = (
 
                 if (
                     table[i][next].some(
-                        (a) => a.accion === 'goto' && a.payload === goTo[i][next],
+                        (a) =>
+                            a.accion === 'goto' && a.payload === goTo[i][next],
                     )
                 )
                     return;
@@ -467,6 +468,76 @@ const calcularTablaAccion = (
     });
 
     return table;
+};
+
+const parseDesc = (cadena: string, table: ActionTableType) => {
+    const stack = [] as number[];
+    const input = cadena.split(' ');
+    input.push('$');
+    const output = [] as string[];
+    let error = false;
+
+    const trace = [] as {
+        stack: number[];
+        input: string[];
+        action: ActionType;
+    }[];
+
+    stack.push(0);
+
+    while (true) {
+        const state = stack[stack.length - 1];
+        const symbol = input[0];
+        const action = table[state][symbol][0];
+
+        trace.push({
+            stack: JSON.parse(JSON.stringify(stack)),
+            input: JSON.parse(JSON.stringify(input)),
+            action,
+        });
+
+        if (!action) {
+            error = true;
+            break;
+        }
+
+        if (action.accion === 'shift') {
+            stack.push(action.payload);
+            input.shift();
+        } else if (action.accion === 'goto') {
+            stack.push(action.payload);
+        } else if (action.accion === 'reduce') {
+            const prod = action.payload;
+            const body = prod.body;
+            const head = prod.head;
+            const len = body.length;
+
+            for (let i = 0; i < len; i++) {
+                stack.pop();
+            }
+
+            const newState = stack[stack.length - 1];
+            const newAction = table[newState][head][0];
+
+            if (!newAction || newAction.accion !== 'goto') {
+                error = true;
+                break;
+            }
+
+            stack.push(newAction.payload);
+            output.push(`${head} --> ${body.join(' ')}`);
+        } else if (action.accion === 'accept') {
+            break;
+        }
+    }
+
+    return {
+        stack,
+        input,
+        output,
+        error,
+        trace
+    };
 };
 
 const useGrammar = () => {
@@ -592,6 +663,25 @@ const useGrammar = () => {
         reader.readAsText(file);
     };
 
+    const parse = (cadena: string) => {
+        const [afd, trans] = AFD(prods, Vt, Vn);
+        console.log(afd);
+        const primeros = calcularPrimeros(prods, Vt, Vn);
+        const siguientes = calcularSiguientes(prods, Vt, Vn, primeros);
+        const tabla = calcularTablaAccion(
+            prods,
+            Vt,
+            Vn,
+            afd,
+            trans,
+            siguientes,
+            true,
+        );
+
+        const p = parseDesc(cadena, tabla);
+        console.log(p);
+    };
+
     return {
         prods,
         addProd,
@@ -619,6 +709,7 @@ const useGrammar = () => {
         LR0,
         calcularTablaSLR,
         SLR,
+        parse,
     };
 };
 

@@ -15,25 +15,22 @@ export const LL1 = () => {
                     <h2 className="text-3xl mb-2">LL1</h2>
                     <table className="table-auto text-lg border-collapse">
                         <thead>
-                            <tr className="bg-blue-500 text-white">
-                                <th className="px-3 py-2 border">Símbolo</th>
+                            <tr>
+                                <th>Símbolo</th>
                                 {Vt.concat('$').map((v) => (
-                                    <th className="px-3 py-2 border" key={v}>
-                                        {v}
-                                    </th>
+                                    <th key={v}>{v}</th>
                                 ))}
                             </tr>
                             {Vn.map((v) => (
                                 <tr key={v}>
-                                    <td className="px-3 py-2 border">{v}</td>
+                                    <td>{v}</td>
                                     {Vt.concat('$').map((t) => (
                                         <td
                                             className={twMerge(
-                                                'px-3 py-2 border',
                                                 ll1[v] &&
                                                     ll1[v][t] &&
                                                     ll1[v][t].length > 1 &&
-                                                    'bg-red-300',
+                                                    'bg-red-300 border-2 border-red-400',
                                             )}
                                             key={t}
                                         >

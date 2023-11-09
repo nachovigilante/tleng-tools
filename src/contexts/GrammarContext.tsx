@@ -7,7 +7,7 @@ import {
     useState,
 } from 'react';
 import { ProdType } from '~/components/Prod';
-import { ActionTableType, ItemType, TransType } from '~/utils/LR';
+import { ActionTableType, ItemType, ParsingType, TransType } from '~/utils/LR';
 import { TableType } from '~/utils/ps';
 
 export type Grammar = {
@@ -36,6 +36,8 @@ export type Grammar = {
     setTrans: Dispatch<SetStateAction<TransType>>;
     setLR0: Dispatch<SetStateAction<ActionTableType>>;
     setSLR: Dispatch<SetStateAction<ActionTableType>>;
+    LRParsing: ParsingType;
+    setLRParsing: Dispatch<SetStateAction<ParsingType>>;
 };
 
 const GrammarContext = createContext({
@@ -64,6 +66,8 @@ const GrammarContext = createContext({
     setTrans: () => {},
     setLR0: () => {},
     setSLR: () => {},
+    LRParsing: {} as ParsingType,
+    setLRParsing: () => {},
 } as Grammar);
 
 export const GrammarProvider = ({ children }: { children: ReactNode }) => {
@@ -194,6 +198,9 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
     const [trans, setTrans] = useState<TransType>({} as TransType);
     const [LR0, setLR0] = useState<ActionTableType>({} as ActionTableType);
     const [SLR, setSLR] = useState<ActionTableType>({} as ActionTableType);
+    const [LRParsing, setLRParsing] = useState<ParsingType>(
+        {} as ParsingType,
+    );
 
     return (
         <GrammarContext.Provider
@@ -223,6 +230,8 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
                 setTrans,
                 setLR0,
                 setSLR,
+                LRParsing,
+                setLRParsing,
             }}
         >
             {children}

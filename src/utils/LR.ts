@@ -316,3 +316,92 @@ export const calcularTablaAccion = (
 
     return table;
 };
+
+export type ParsingType = {
+    stack: number[];
+    input: string[];
+    output: string[];
+    error: boolean;
+    trace: {
+        stack: number[];
+        input: string[];
+        action: ActionType;
+    }[];
+}
+
+export const parseDesc = (cadena: string, table: ActionTableType): ParsingType => {
+    const stack = [] as number[];
+    const input = cadena.split(' ');
+    input.push('$');
+    const output = [] as string[];
+    let error = false;
+
+    const trace = [] as {
+        stack: number[];
+        input: string[];
+        action: ActionType;
+    }[];
+
+    stack.push(0);
+
+    while (true) {
+        const state = stack[stack.length - 1];
+        const symbol = input[0];
+        const action = table[state][symbol][0];
+
+        trace.push({
+            stack: JSON.parse(JSON.stringify(stack)),
+            input: JSON.parse(JSON.stringify(input)),
+            action,
+        });
+
+        if (!action) {
+            error = true;
+            break;
+        }
+
+        if (action.accion === 'shift') {
+            stack.push(action.payload);
+            input.shift();
+        } else if (action.accion === 'goto') {
+            stack.push(action.payload);
+        } else if (action.accion === 'reduce') {
+            const prod = action.payload;
+            const body = prod.body;
+            const head = prod.head;
+            const len = body.length;
+
+            for (let i = 0; i < len; i++) {
+                stack.pop();
+            }
+
+            const newState = stack[stack.length - 1];
+            const newAction = table[newState][head][0];
+
+            if (!newAction || newAction.accion !== 'goto') {
+                error = true;
+                break;
+            }
+
+            stack.push(newAction.payload);
+            output.push(`${head} --> ${body.join(' ')}`);
+        } else if (action.accion === 'accept') {
+            break;
+        }
+    }
+
+    return {
+        stack,
+        input,
+        output,
+        error,
+        trace,
+    };
+};
+
+export const showAction = (action: ActionType) => {
+    if (action.accion === 'shift') return `s(${action.payload})`;
+    if (action.accion === 'reduce')
+        return `r(${action.payload.head} --> ${action.payload.body.join(' ')})`;
+    if (action.accion === 'accept') return `accept`;
+};

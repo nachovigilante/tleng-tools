@@ -12,14 +12,14 @@ export const PS = () => {
                     <table className="table-auto text-lg border-collapse">
                         <thead>
                             <tr className="bg-blue-500 text-white">
-                                <th className="px-3 py-2 border">Símbolo</th>
-                                <th className="px-3 py-2 border">Primeros</th>
-                                <th className="px-3 py-2 border">Siguientes</th>
+                                <th>Símbolo</th>
+                                <th>Primeros</th>
+                                <th>Siguientes</th>
                             </tr>
                             {Object.keys(siguientes).map((v) => (
                                 <tr key={v}>
-                                    <td className="px-3 py-2 border">{v}</td>
-                                    <td className="px-3 py-2 border">
+                                    <td>{v}</td>
+                                    <td>
                                         <div className="flex items-center">
                                             <p className="text-3xl">{`{`}</p>
                                             {primeros[v] &&
@@ -27,7 +27,7 @@ export const PS = () => {
                                             <p className="text-3xl">{`}`}</p>
                                         </div>
                                     </td>
-                                    <td className="px-3 py-2 border">
+                                    <td>
                                         <div className="flex items-center">
                                             <p className="text-3xl">{`{`}</p>
                                             {siguientes[v].join(', ')}

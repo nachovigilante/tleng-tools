@@ -5,6 +5,7 @@ import {
     ItemType,
     TransType,
     calcularTablaAccion,
+    parseDesc,
 } from '~/utils/LR';
 import useGrammar from './useGrammar';
 
@@ -22,6 +23,8 @@ const useLR = () => {
         trans,
         LR0,
         SLR,
+        LRParsing,
+        setLRParsing,
     } = useGrammar();
 
     useEffect(() => {
@@ -48,11 +51,29 @@ const useLR = () => {
         );
     }, [afd, trans]);
 
+    const parse = (cadena: string) => {
+        const [afd, trans] = AFD(prods, Vt, Vn);
+        console.log(afd);
+        const tabla = calcularTablaAccion(
+            prods,
+            Vt,
+            Vn,
+            afd,
+            trans,
+            siguientes,
+            true,
+        );
+
+        setLRParsing(parseDesc(cadena, tabla));
+    };
+
     return {
         afd,
         trans,
         LR0,
         SLR,
+        parse,
+        LRParsing,
     };
 };
 

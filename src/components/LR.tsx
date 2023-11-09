@@ -2,18 +2,11 @@
 import useGrammar from '~/hooks/useGrammar';
 import { twMerge } from 'tailwind-merge';
 import { useEffect, useState } from 'react';
-import { ActionTableType, ActionType } from '~/utils/LR';
+import { ActionTableType, ActionType, showAction } from '~/utils/LR';
 import useLR0 from '~/hooks/useLR0';
 import useSLR from '~/hooks/useSLR';
 import useLR from '~/hooks/useLR';
 import { ErrorMsg } from './layout/ErrorMsg';
-
-export const showAction = (action: ActionType) => {
-    if (action.accion === 'shift') return `s(${action.payload})`;
-    if (action.accion === 'reduce')
-        return `r(${action.payload.head} --> ${action.payload.body.join(' ')})`;
-    if (action.accion === 'accept') return `accept`;
-};
 
 export const LR = () => {
     const { Vt } = useGrammar();
@@ -46,16 +39,14 @@ export const LR = () => {
                             {isSLR ? 'LR(0)' : 'SLR(1)'}
                         </button>
                     </div>
-
                     <table className="table-auto">
                         <thead>
                             <tr>
-                                <th className="px-4 py-2 border bg-blue-500 text-white">
+                                <th>
                                     Estado
                                 </th>
                                 {Vt.concat(['$']).map((v, i) => (
                                     <th
-                                        className="px-4 py-2 border bg-blue-500 text-white"
                                         key={i}
                                     >
                                         {v}
@@ -66,21 +57,16 @@ export const LR = () => {
                         <tbody>
                             {Object.keys(tabla).map((_, i) => (
                                 <tr key={i}>
-                                    <td className="border px-4 py-2 text-center">
-                                        {i}
-                                    </td>
+                                    <td className="text-center">{i}</td>
                                     {Vt.concat(['$']).map((v, j) => (
                                         <td
-                                            className="border px-4 py-2"
+                                            className={twMerge(
+                                                tabla[i][v].length > 1 &&
+                                                    'bg-red-300 border-red-400 border-2',
+                                            )}
                                             key={j}
                                         >
-                                            <div
-                                                className={twMerge(
-                                                    'flex flex-col justify-center items-center',
-                                                    tabla[i][v].length > 1 &&
-                                                        'bg-red-300',
-                                                )}
-                                            >
+                                            <div className="flex flex-col justify-center items-center">
                                                 {tabla[i] &&
                                                     tabla[i][v].length > 0 &&
                                                     tabla[i][v].map((e, k) => (
@@ -91,11 +77,6 @@ export const LR = () => {
                                             </div>
                                         </td>
                                     ))}
-                                    {/* {Vn.map((v, j) => (
-                                        <td className="border px-4 py-2" key={j}>
-                                            {accion[i][v]}
-                                        </td>
-                                    ))} */}
                                 </tr>
                             ))}
                         </tbody>

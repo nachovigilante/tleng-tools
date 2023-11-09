@@ -8,11 +8,12 @@ export const Productions = () => {
     return (
         <div className="border rounded-lg flex flex-col w-[400px] p-4 text-xl gap-5">
             <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded w-fit self-end absolute"
+                className="flex items-center gap-2 self-end absolute"
                 onClick={() => {
                     navigator.clipboard.writeText('λ');
                 }}
             >
+                <img src="/assets/copy.svg" alt="" className="h-5"/>
                 λ
             </button>
             {prods.length > 0 && (
@@ -31,10 +32,10 @@ export const Productions = () => {
                 </div>
             )}
             <button
-                className="text-center bg-blue-500 hover:bg-blue-700 rounded-md text-white font-semibold text-2xl"
+                className="text-center text-2xl w-full flex justify-center"
                 onClick={() => addProd({ head: '', body: [] })}
             >
-                +
+                <img src="/assets/add.svg" alt="" className="h-8" />
             </button>
         </div>
     );

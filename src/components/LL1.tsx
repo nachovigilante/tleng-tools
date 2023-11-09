@@ -1,6 +1,5 @@
 'use client';
 import { twMerge } from 'tailwind-merge';
-import { Grammar } from '~/contexts/GrammarContext';
 import useGrammar from '~/hooks/useGrammar';
 import useLL1 from '~/hooks/useLL1';
 

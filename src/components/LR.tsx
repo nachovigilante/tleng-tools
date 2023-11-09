@@ -13,7 +13,7 @@ export const showAction = (action: ActionType) => {
     if (action.accion === 'accept') return `accept`;
 };
 
-export const LR0 = () => {
+export const LR = () => {
     const { Vt } = useGrammar();
     const { calcularLR0, LR0 } = useLR0();
     const { calcularSLR, SLR } = useSLR();

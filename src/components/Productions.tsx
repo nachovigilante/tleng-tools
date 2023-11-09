@@ -7,6 +7,14 @@ export const Productions = () => {
 
     return (
         <div className="border rounded-lg flex flex-col w-[400px] p-4 text-xl gap-5">
+            <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded w-fit self-end absolute"
+                onClick={() => {
+                    navigator.clipboard.writeText('λ');
+                }}
+            >
+                λ
+            </button>
             {prods.length > 0 && (
                 <div className="flex flex-col gap-2">
                     {prods.map((p, index) => {
@@ -23,7 +31,7 @@ export const Productions = () => {
                 </div>
             )}
             <button
-                className="text-center bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 active:bg-gray-400"
+                className="text-center bg-blue-500 hover:bg-blue-700 rounded-md text-white font-semibold text-2xl"
                 onClick={() => addProd({ head: '', body: [] })}
             >
                 +

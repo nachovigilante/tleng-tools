@@ -1,24 +1,20 @@
 'use client';
 
 import { Productions } from '../components/Productions';
-import { GrammarProvider } from '~/contexts/GrammarContext';
 import { Languages } from '../components/Languages';
 import { PS } from '../components/PS';
 import useGrammar from '~/hooks/useGrammar';
-import { SD } from '../components/SD';
-import { LL1 } from '../components/LL1';
-import { Afd } from '../components/Afd';
-import { LR0 } from '../components/LR';
 
 const Export = () => {
     const { exportGrammar } = useGrammar();
 
     return (
         <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
             onClick={exportGrammar}
         >
-            Exportar gramática
+            <img src="/assets/export.svg" alt="" className="h-4" />
+            Exportar
         </button>
     );
 };
@@ -27,32 +23,26 @@ const Import = () => {
     const { importGrammar } = useGrammar();
 
     return (
-        <input
-            type="file"
-            accept="application/json"
-            onChange={(e) => {
-                if (e.target.files) importGrammar(e.target.files[0]);
-            }}
-        />
-    );
-};
-
-const Parse = () => {
-    const { parse } = useGrammar();
-
-    return (
         <>
+            <input
+                type="file"
+                accept="application/json"
+                onChange={(e) => {
+                    if (e.target.files) importGrammar(e.target.files[0]);
+                }}
+                hidden
+            />
             <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={() => parse('( a a | a )')}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
+                onClick={() => {
+                    const input = document.querySelector(
+                        'input[type=file]',
+                    ) as HTMLInputElement;
+                    if (input) input.click();
+                }}
             >
-                Parsear con LR0
-            </button>
-            <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                onClick={() => parse('( a a | a )')}
-            >
-                Parsear con SLR
+                <img src="/assets/import.svg" alt="" className="h-4"/>
+                Importar
             </button>
         </>
     );
@@ -60,31 +50,22 @@ const Parse = () => {
 
 const Home = () => {
     return (
-        <GrammarProvider>
-            <main className="p-10">
-                <h1 className="text-4xl">Gramática</h1>
-                <div className="flex flex-col gap-5 mt-5">
-                    <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-fit"
-                        onClick={() => {
-                            navigator.clipboard.writeText('λ');
-                        }}
-                    >
-                        Copiar λ
-                    </button>
+        <main className="p-10">
+            <h1 className="text-4xl">Gramática</h1>
+            <div className="flex flex-wrap gap-10 mt-5">
+                <div className="flex flex-col gap-5 justify-center">
                     <Productions />
-                    <Languages />
-                    <Afd />
-                    <LR0 />
-                    <Parse />
-                    <PS />
-                    <SD />
-                    <LL1 />
-                    <Export />
-                    <Import />
+                    <div className="flex items-center gap-5 justify-center">
+                        <Export />
+                        <Import />
+                    </div>
                 </div>
-            </main>
-        </GrammarProvider>
+                <div className="flex flex-col gap-10">
+                    <Languages />
+                    <PS />
+                </div>
+            </div>
+        </main>
     );
 };
 

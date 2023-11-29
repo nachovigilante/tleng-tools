@@ -29,9 +29,11 @@ const GrabbingDots = () => {
 export const Prod = ({
     prod,
     updateProd,
+    deleteProd,
 }: {
     prod: ProdType;
     updateProd: (prod: ProdType) => void;
+    deleteProd: () => void;
 }) => {
     const [head, setHead] = useState(prod.head);
     const headRef = useRef<HTMLInputElement>(null);
@@ -40,9 +42,9 @@ export const Prod = ({
     const [editing, setEditing] = useState(false);
     const bodyRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        console.log(editing);
-    }, [editing]);
+    // useEffect(() => {
+    //     console.log(editing);
+    // }, [editing]);
 
     const handleChange = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -56,7 +58,7 @@ export const Prod = ({
     return (
         <form action="" onSubmit={handleChange}>
             <div className="flex items-center h-10 gap-2">
-                {!editing && <p>{prod.head}</p>}
+                {!editing && <p>{prod.head || '__'}</p>}
                 <input
                     ref={headRef}
                     className="border rounded-md p-1 px-2 w-10"
@@ -71,13 +73,18 @@ export const Prod = ({
                 <p className="min-w-[28px]">{`-->`}</p>
                 <div className="flex gap-1">
                     {!editing &&
-                        prod.body.map((item, index) => {
-                            return (
-                                <div key={index} className="flex items-center">
-                                    <p>{item}</p>
-                                </div>
-                            );
-                        })}
+                        (prod.body.length > 0
+                            ? prod.body.map((item, index) => {
+                                  return (
+                                      <div
+                                          key={index}
+                                          className="flex items-center"
+                                      >
+                                          <p>{item}</p>
+                                      </div>
+                                  );
+                              })
+                            : '__')}
                     <input
                         ref={bodyRef}
                         tabIndex={0}
@@ -100,6 +107,19 @@ export const Prod = ({
                             >
                                 <img
                                     src="/assets/edit.svg"
+                                    alt=""
+                                    className="h-4"
+                                />
+                            </button>
+                            <button
+                                className="p-2 flex items-center justify-center bg-transparent hover:bg-red-500 border hover:border-red-400"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    deleteProd();
+                                }}
+                            >
+                                <img
+                                    src="/assets/delete.svg"
                                     alt=""
                                     className="h-4"
                                 />

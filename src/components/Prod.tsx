@@ -7,6 +7,25 @@ export type ProdType = {
     body: string[];
 };
 
+const GrabbingDots = () => {
+    return (
+        <div className="w-5 flex flex-col gap-1">
+            <div className="flex items-center gap-1">
+                <div className="rounded-full bg-gray-300 w-1 h-1" />
+                <div className="rounded-full bg-gray-300 w-1 h-1" />
+            </div>
+            <div className="flex items-center gap-1">
+                <div className="rounded-full bg-gray-300 w-1 h-1" />
+                <div className="rounded-full bg-gray-300 w-1 h-1" />
+            </div>
+            <div className="flex items-center gap-1">
+                <div className="rounded-full bg-gray-300 w-1 h-1" />
+                <div className="rounded-full bg-gray-300 w-1 h-1" />
+            </div>
+        </div>
+    );
+};
+
 export const Prod = ({
     prod,
     updateProd,
@@ -15,94 +34,116 @@ export const Prod = ({
     updateProd: (prod: ProdType) => void;
 }) => {
     const [head, setHead] = useState(prod.head);
-    const [editingHead, setEditingHead] = useState(prod.head === '');
     const headRef = useRef<HTMLInputElement>(null);
     const [body, setBody] = useState(prod.body.join(' ') || '');
 
-    const [editingBody, setEditingBody] = useState(false);
+    const [editing, setEditing] = useState(false);
     const bodyRef = useRef<HTMLInputElement>(null);
 
+    useEffect(() => {
+        console.log(editing);
+    }, [editing]);
+
+    const handleChange = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setEditing(false);
+        updateProd({
+            head,
+            body: body.split(' ').filter((item) => item !== ''),
+        });
+    };
+
     return (
-        <div className="flex items-center h-10 gap-2">
-            {!editingHead ? (
-                <p
-                    className="cursor-pointer"
-                    onClick={() => {
-                        setEditingHead(true);
-                    }}
-                >
-                    {prod.head}
-                </p>
-            ) : (
+        <form action="" onSubmit={handleChange}>
+            <div className="flex items-center h-10 gap-2">
+                {!editing && <p>{prod.head}</p>}
                 <input
                     ref={headRef}
-                    className="border rounded-md p-1 px-2 w-8"
+                    className="border rounded-md p-1 px-2 w-10"
                     type="text"
-                    onKeyUp={(e) => {
+                    tabIndex={0}
+                    onChange={(e) => {
                         setHead(e.currentTarget.value);
-                        if (e.key === 'Enter') {
-                            setEditingHead(false);
-                            updateProd({
-                                head,
-                                body: body
-                                    .split(' ')
-                                    .filter((item) => item !== ''),
-                            });
-                        }
                     }}
+                    value={head}
+                    hidden={!editing}
                 />
-            )}
-            <p className="w-[28px]">{`-->`}</p>
-            <div className="flex gap-1">
-                {!editingBody &&
-                    prod.body.map((item, index) => {
-                        return (
-                            <div
-                                key={index}
-                                className="flex items-center cursor-pointer"
-                                onClick={() => {
-                                    setEditingBody(true);
+                <p className="min-w-[28px]">{`-->`}</p>
+                <div className="flex gap-1">
+                    {!editing &&
+                        prod.body.map((item, index) => {
+                            return (
+                                <div key={index} className="flex items-center">
+                                    <p>{item}</p>
+                                </div>
+                            );
+                        })}
+                    <input
+                        ref={bodyRef}
+                        tabIndex={0}
+                        className="border rounded-md p-1 px-2 w-full"
+                        type="text"
+                        onChange={(e) => {
+                            setBody(e.currentTarget.value);
+                        }}
+                        value={body}
+                        hidden={!editing}
+                    />
+                    {!editing ? (
+                        <div className="ml-2 flex items-center gap-1">
+                            <button
+                                className="p-2 flex items-center justify-center bg-transparent hover:bg-gray-200 border"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setEditing(true);
                                 }}
                             >
-                                <p>{item}</p>
-                            </div>
-                        );
-                    })}
-                <input
-                    ref={bodyRef}
-                    className={twMerge(
-                        'border rounded-md p-1 px-2 flex-grow',
-                        editingBody ? 'block' : 'hidden',
+                                <img
+                                    src="/assets/edit.svg"
+                                    alt=""
+                                    className="h-4"
+                                />
+                            </button>
+                            {/* <button
+                                className="p-2 flex items-center justify-center bg-transparent hover:bg-gray-200 border"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                }}
+                            >
+                                <img
+                                    src="/assets/arrow.svg"
+                                    alt=""
+                                    className="h-4 rotate-90"
+                                />
+                            </button>
+                            <button
+                                className="p-2 flex items-center justify-center bg-transparent hover:bg-gray-200 border"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                }}
+                            >
+                                <img
+                                    src="/assets/arrow.svg"
+                                    alt=""
+                                    className="h-4 -rotate-90"
+                                />
+                            </button> */}
+                        </div>
+                    ) : (
+                        <button
+                            className="ml-2 p-2 flex items-center justify-center bg-green-500 hover:bg-green-600"
+                            tabIndex={0}
+                            type="submit"
+                        >
+                            <img
+                                src="/assets/check.svg"
+                                alt=""
+                                className="h-5"
+                            />
+                        </button>
                     )}
-                    type="text"
-                    onChange={(e) => {
-                        setBody(e.currentTarget.value);
-                    }}
-                    onKeyUp={(e) => {
-                        if (e.key === 'Enter') {
-                            setEditingBody(false);
-                            updateProd({
-                                head,
-                                body: body
-                                    .split(' ')
-                                    .filter((item) => item !== ''),
-                            });
-                        }
-                    }}
-                    value={body}
-                />
-                {!editingBody && (
-                    <button
-                        className="ml-2 p-2 flex items-center justify-center bg-transparent hover:bg-gray-200 border"
-                        onClick={() => {
-                            bodyRef.current?.select();
-                            setEditingBody(true);
-                        }}
-                    >
-                        <img src="/assets/edit.svg" alt="" className="h-4"/>
-                    </button>
-                )}
+                </div>
             </div>
-        </div>
+        </form>
     );
 };

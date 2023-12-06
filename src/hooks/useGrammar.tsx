@@ -25,22 +25,13 @@ const useGrammar = () => {
         resetVn();
         resetVt();
 
-        const newVn = [] as string[];
-        const newVt = [] as string[];
-        prods.forEach((p) => {
-            if (!newVn.includes(p.head)) newVn.push(p.head);
-        });
-        prods.forEach((p) => {
-            p.body.forEach((v) => {
-                if (!newVn.includes(v) && !newVt.includes(v)) newVt.push(v);
-            });
-        });
+        const vnSet = new Set(prods.map((p) => p.head));
+        const allBodySymbols = new Set(prods.map((p) => p.body).flat());
+        // JS has no set difference ???
+        const vtSet = new Set([...allBodySymbols].filter((x) => !vnSet.has(x)));
 
-        newVn.forEach((v) => addVn(v));
-        newVt.forEach((v) => addVt(v));
-
-        if (prods.some((p) => !Vn.includes(p.head)) || prods.length === 0)
-            return;
+        vnSet.forEach((v) => addVn(v));
+        vtSet.forEach((v) => addVt(v));
     }, [prods]);
 
     useEffect(() => {

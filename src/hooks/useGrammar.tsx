@@ -4,7 +4,8 @@ import GrammarContext from '~/contexts/GrammarContext';
 import { TableType, calcularPrimeros, calcularSiguientes } from '~/utils/ps';
 
 const useGrammar = () => {
-    const { prods, addProd, resetProd, ...rest } = useContext(GrammarContext);
+    const grammar = useContext(GrammarContext);
+    const { prods, addProd, resetProd } = grammar;
 
     // Símbolos terminales y no terminales
     const [Vn, Vt] = useMemo(() => {
@@ -57,16 +58,13 @@ const useGrammar = () => {
     );
 
     return {
-        prods,
-        addProd,
-        resetProd,
         Vn,
         Vt,
         primeros,
         siguientes,
         exportGrammar,
         importGrammar,
-        ...rest,
+        ...grammar,
     };
 };
 

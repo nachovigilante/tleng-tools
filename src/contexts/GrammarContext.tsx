@@ -3,6 +3,7 @@ import {
     ReactNode,
     SetStateAction,
     createContext,
+    useMemo,
     useReducer,
     useState,
 } from 'react';
@@ -17,13 +18,7 @@ export type Grammar = {
     updateProd: (index: number, prod: ProdType) => void;
     resetProd: () => void;
     Vn: string[];
-    addVn: (symbol: string) => void;
-    removeVn: (symbol: string) => void;
-    resetVn: () => void;
     Vt: string[];
-    addVt: (symbol: string) => void;
-    removeVt: (symbol: string) => void;
-    resetVt: () => void;
     primeros: TableType;
     siguientes: TableType;
     setPrimeros: Dispatch<SetStateAction<TableType>>;
@@ -47,13 +42,7 @@ const GrammarContext = createContext({
     updateProd: () => {},
     resetProd: () => {},
     Vn: [],
-    addVn: () => {},
-    removeVn: () => {},
-    resetVn: () => {},
     Vt: [],
-    addVt: () => {},
-    removeVt: () => {},
-    resetVt: () => {},
     primeros: {} as TableType,
     siguientes: {} as TableType,
     setPrimeros: () => {},
@@ -120,77 +109,14 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
         dispatch({ type: 'reset', payload: { index: -1 } });
     };
 
-    const [Vn, dispatchVn] = useReducer(
-        (
-            state: string[],
-            action: {
-                type: 'add' | 'remove' | 'reset';
-                payload: { symbol: string };
-            },
-        ) => {
-            switch (action.type) {
-                case 'add':
-                    return [...state, action.payload.symbol];
-                case 'remove':
-                    return state.filter(
-                        (symbol) => symbol !== action.payload.symbol,
-                    );
-                case 'reset':
-                    return [];
-                default:
-                    return state;
-            }
-        },
-        [] as string[],
-    );
+    const [Vn, Vt] = useMemo(() => {
+        const vnSet = new Set(prods.map((p) => p.head));
+        const bodySymbols = new Set(prods.map((p) => p.body).flat());
+        // JS has no set difference ???
+        const vtSet = new Set([...bodySymbols].filter((x) => !vnSet.has(x)));
 
-    const addVn = (symbol: string) => {
-        dispatchVn({ type: 'add', payload: { symbol } });
-    };
-
-    const removeVn = (symbol: string) => {
-        dispatchVn({ type: 'remove', payload: { symbol } });
-    };
-
-    const resetVn = () => {
-        dispatchVn({ type: 'reset', payload: { symbol: '' } });
-    };
-
-    const [Vt, dispatchVt] = useReducer(
-        (
-            state: string[],
-            action: {
-                type: 'add' | 'remove' | 'reset';
-                payload: { symbol: string };
-            },
-        ) => {
-            switch (action.type) {
-                case 'add':
-                    return [...state, action.payload.symbol];
-                case 'remove':
-                    return state.filter(
-                        (symbol) => symbol !== action.payload.symbol,
-                    );
-                case 'reset':
-                    return [];
-                default:
-                    return state;
-            }
-        },
-        [] as string[],
-    );
-
-    const addVt = (symbol: string) => {
-        dispatchVt({ type: 'add', payload: { symbol } });
-    };
-
-    const removeVt = (symbol: string) => {
-        dispatchVt({ type: 'remove', payload: { symbol } });
-    };
-
-    const resetVt = () => {
-        dispatchVt({ type: 'reset', payload: { symbol: '' } });
-    };
+        return [Array.from(vnSet), Array.from(vtSet)];
+    }, [prods]);
 
     const [primeros, setPrimeros] = useState<TableType>({} as TableType);
     const [siguientes, setSiguientes] = useState<TableType>({} as TableType);
@@ -198,9 +124,7 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
     const [trans, setTrans] = useState<TransType>({} as TransType);
     const [LR0, setLR0] = useState<ActionTableType>({} as ActionTableType);
     const [SLR, setSLR] = useState<ActionTableType>({} as ActionTableType);
-    const [LRParsing, setLRParsing] = useState<ParsingType>(
-        {} as ParsingType,
-    );
+    const [LRParsing, setLRParsing] = useState<ParsingType>({} as ParsingType);
 
     return (
         <GrammarContext.Provider
@@ -210,13 +134,7 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
                 removeProd,
                 updateProd,
                 Vn,
-                addVn,
-                removeVn,
-                resetVn,
                 Vt,
-                addVt,
-                removeVt,
-                resetVt,
                 resetProd,
                 primeros,
                 siguientes,

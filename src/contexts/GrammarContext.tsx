@@ -17,10 +17,6 @@ export type Grammar = {
     removeProd: (index: number) => void;
     updateProd: (index: number, prod: ProdType) => void;
     resetProd: () => void;
-    Vn: string[];
-    Vt: string[];
-    primeros: TableType;
-    siguientes: TableType;
     afd: ItemType[][];
     trans: TransType;
     LR0: ActionTableType;
@@ -39,10 +35,6 @@ const GrammarContext = createContext({
     removeProd: () => {},
     updateProd: () => {},
     resetProd: () => {},
-    Vn: [],
-    Vt: [],
-    primeros: {} as TableType,
-    siguientes: {} as TableType,
     afd: [] as ItemType[][],
     trans: {} as TransType,
     LR0: {} as ActionTableType,
@@ -105,25 +97,6 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
         dispatch({ type: 'reset', payload: { index: -1 } });
     };
 
-    const [Vn, Vt] = useMemo(() => {
-        const vnSet = new Set(prods.map((p) => p.head));
-        const bodySymbols = new Set(prods.map((p) => p.body).flat());
-        // JS has no set difference ???
-        const vtSet = new Set([...bodySymbols].filter((x) => !vnSet.has(x)));
-
-        return [Array.from(vnSet), Array.from(vtSet)];
-    }, [prods]);
-
-    const [primeros, siguientes] = useMemo(() => {
-        if (prods.length === 0 || Vt.length === 0 || Vn.length === 0)
-            return [{}, {}] as [TableType, TableType];
-
-        const prim = calcularPrimeros(prods, Vt, Vn);
-        const sig = calcularSiguientes(prods, Vn, prim);
-
-        return [prim, sig];
-    }, [prods, Vn, Vt]);
-
     const [afd, setAfd] = useState<ItemType[][]>([] as ItemType[][]);
     const [trans, setTrans] = useState<TransType>({} as TransType);
     const [LR0, setLR0] = useState<ActionTableType>({} as ActionTableType);
@@ -137,11 +110,7 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
                 addProd,
                 removeProd,
                 updateProd,
-                Vn,
-                Vt,
                 resetProd,
-                primeros,
-                siguientes,
                 afd,
                 trans,
                 LR0,

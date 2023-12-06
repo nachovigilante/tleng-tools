@@ -41,7 +41,7 @@ const Import = () => {
                     if (input) input.click();
                 }}
             >
-                <img src="/assets/import.svg" alt="" className="h-4"/>
+                <img src="/assets/import.svg" alt="" className="h-4" />
                 Importar
             </button>
         </>

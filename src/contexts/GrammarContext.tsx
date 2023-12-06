@@ -1,15 +1,5 @@
-import {
-    Dispatch,
-    ReactNode,
-    SetStateAction,
-    createContext,
-    useMemo,
-    useReducer,
-    useState,
-} from 'react';
+import { ReactNode, createContext, useReducer } from 'react';
 import { ProdType } from '~/components/Prod';
-import { ActionTableType, ItemType, ParsingType, TransType } from '~/utils/LR';
-import { TableType, calcularPrimeros, calcularSiguientes } from '~/utils/ps';
 
 export type Grammar = {
     prods: ProdType[];
@@ -17,16 +7,6 @@ export type Grammar = {
     removeProd: (index: number) => void;
     updateProd: (index: number, prod: ProdType) => void;
     resetProd: () => void;
-    afd: ItemType[][];
-    trans: TransType;
-    LR0: ActionTableType;
-    SLR: ActionTableType;
-    setAfd: Dispatch<SetStateAction<ItemType[][]>>;
-    setTrans: Dispatch<SetStateAction<TransType>>;
-    setLR0: Dispatch<SetStateAction<ActionTableType>>;
-    setSLR: Dispatch<SetStateAction<ActionTableType>>;
-    LRParsing: ParsingType;
-    setLRParsing: Dispatch<SetStateAction<ParsingType>>;
 };
 
 const GrammarContext = createContext({
@@ -35,16 +15,6 @@ const GrammarContext = createContext({
     removeProd: () => {},
     updateProd: () => {},
     resetProd: () => {},
-    afd: [] as ItemType[][],
-    trans: {} as TransType,
-    LR0: {} as ActionTableType,
-    SLR: {} as ActionTableType,
-    setAfd: () => {},
-    setTrans: () => {},
-    setLR0: () => {},
-    setSLR: () => {},
-    LRParsing: {} as ParsingType,
-    setLRParsing: () => {},
 } as Grammar);
 
 export const GrammarProvider = ({ children }: { children: ReactNode }) => {
@@ -97,12 +67,6 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
         dispatch({ type: 'reset', payload: { index: -1 } });
     };
 
-    const [afd, setAfd] = useState<ItemType[][]>([] as ItemType[][]);
-    const [trans, setTrans] = useState<TransType>({} as TransType);
-    const [LR0, setLR0] = useState<ActionTableType>({} as ActionTableType);
-    const [SLR, setSLR] = useState<ActionTableType>({} as ActionTableType);
-    const [LRParsing, setLRParsing] = useState<ParsingType>({} as ParsingType);
-
     return (
         <GrammarContext.Provider
             value={{
@@ -111,16 +75,6 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
                 removeProd,
                 updateProd,
                 resetProd,
-                afd,
-                trans,
-                LR0,
-                SLR,
-                setAfd,
-                setTrans,
-                setLR0,
-                setSLR,
-                LRParsing,
-                setLRParsing,
             }}
         >
             {children}

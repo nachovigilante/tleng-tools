@@ -1,10 +1,8 @@
 'use client';
 import useGrammar from '~/hooks/useGrammar';
 import { twMerge } from 'tailwind-merge';
-import { useEffect, useState } from 'react';
-import { ActionTableType, ActionType, showAction } from '~/utils/LR';
-import useLR0 from '~/hooks/useLR0';
-import useSLR from '~/hooks/useSLR';
+import { useMemo, useState } from 'react';
+import { showAction } from '~/utils/LR';
 import useLR from '~/hooks/useLR';
 import { ErrorMsg } from './layout/ErrorMsg';
 
@@ -12,12 +10,11 @@ export const LR = () => {
     const { Vt } = useGrammar();
     const { LR0, SLR } = useLR();
 
-    const [tabla, setTabla] = useState({} as ActionTableType);
     const [isSLR, setIsSLR] = useState(false);
 
-    useEffect(() => {
-        if (!isSLR) setTabla(LR0);
-        else setTabla(SLR);
+    const tabla = useMemo(() => {
+        if (!isSLR) return LR0;
+        else return SLR;
     }, [isSLR, LR0, SLR]);
 
     return (
@@ -42,15 +39,9 @@ export const LR = () => {
                     <table className="table-auto">
                         <thead>
                             <tr>
-                                <th>
-                                    Estado
-                                </th>
+                                <th>Estado</th>
                                 {Vt.concat(['$']).map((v, i) => (
-                                    <th
-                                        key={i}
-                                    >
-                                        {v}
-                                    </th>
+                                    <th key={i}>{v}</th>
                                 ))}
                             </tr>
                         </thead>

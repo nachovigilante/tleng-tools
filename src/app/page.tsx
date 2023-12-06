@@ -1,7 +1,7 @@
 'use client';
 
 import { Productions } from '../components/Productions';
-import { Languages } from '../components/Languages';
+import { Alphabets } from '../components/Alphabets';
 import { PS } from '../components/PS';
 import useGrammar from '~/hooks/useGrammar';
 
@@ -61,7 +61,7 @@ const Home = () => {
                     </div>
                 </div>
                 <div className="flex flex-col gap-10">
-                    <Languages />
+                    <Alphabets />
                     <PS />
                 </div>
             </div>

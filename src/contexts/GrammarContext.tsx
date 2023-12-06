@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { ProdType } from '~/components/Prod';
 import { ActionTableType, ItemType, ParsingType, TransType } from '~/utils/LR';
-import { TableType } from '~/utils/ps';
+import { TableType, calcularPrimeros, calcularSiguientes } from '~/utils/ps';
 
 export type Grammar = {
     prods: ProdType[];
@@ -21,8 +21,6 @@ export type Grammar = {
     Vt: string[];
     primeros: TableType;
     siguientes: TableType;
-    setPrimeros: Dispatch<SetStateAction<TableType>>;
-    setSiguientes: Dispatch<SetStateAction<TableType>>;
     afd: ItemType[][];
     trans: TransType;
     LR0: ActionTableType;
@@ -45,8 +43,6 @@ const GrammarContext = createContext({
     Vt: [],
     primeros: {} as TableType,
     siguientes: {} as TableType,
-    setPrimeros: () => {},
-    setSiguientes: () => {},
     afd: [] as ItemType[][],
     trans: {} as TransType,
     LR0: {} as ActionTableType,
@@ -118,8 +114,16 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
         return [Array.from(vnSet), Array.from(vtSet)];
     }, [prods]);
 
-    const [primeros, setPrimeros] = useState<TableType>({} as TableType);
-    const [siguientes, setSiguientes] = useState<TableType>({} as TableType);
+    const [primeros, siguientes] = useMemo(() => {
+        if (prods.length === 0 || Vt.length === 0 || Vn.length === 0)
+            return [{}, {}] as [TableType, TableType];
+
+        const prim = calcularPrimeros(prods, Vt, Vn);
+        const sig = calcularSiguientes(prods, Vn, prim);
+
+        return [prim, sig];
+    }, [prods, Vn, Vt]);
+
     const [afd, setAfd] = useState<ItemType[][]>([] as ItemType[][]);
     const [trans, setTrans] = useState<TransType>({} as TransType);
     const [LR0, setLR0] = useState<ActionTableType>({} as ActionTableType);
@@ -138,8 +142,6 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
                 resetProd,
                 primeros,
                 siguientes,
-                setPrimeros,
-                setSiguientes,
                 afd,
                 trans,
                 LR0,

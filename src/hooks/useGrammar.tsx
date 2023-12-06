@@ -4,30 +4,8 @@ import GrammarContext from '~/contexts/GrammarContext';
 import { calcularPrimeros, calcularSiguientes } from '~/utils/ps';
 
 const useGrammar = () => {
-    const {
-        prods,
-        addProd,
-        resetProd,
-        Vn,
-        Vt,
-        primeros,
-        siguientes,
-        setPrimeros,
-        setSiguientes,
-        ...rest
-    } = useContext(GrammarContext);
-
-    useEffect(() => {
-        if (Vn.length == 0 || Vt.length == 0) return;
-        if (prods.some((p) => !Vn.includes(p.head))) return;
-        setPrimeros(calcularPrimeros(prods, Vt, Vn));
-    }, [prods, Vt, Vn]);
-
-    useEffect(() => {
-        if (Vn.length == 0 || Vt.length == 0) return;
-        if (prods.some((p) => !Vn.includes(p.head))) return;
-        setSiguientes(calcularSiguientes(prods, Vn, primeros));
-    }, [primeros]);
+    const { prods, addProd, resetProd, Vn, Vt, primeros, siguientes, ...rest } =
+        useContext(GrammarContext);
 
     const exportGrammar = () => {
         const grammar = {

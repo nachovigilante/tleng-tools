@@ -5,8 +5,8 @@ import useGrammar from '~/hooks/useGrammar';
 import useLR from '~/hooks/useLR';
 
 export const Afd = () => {
-    const { afd, trans } = useLR();
     const { Vn, Vt } = useGrammar();
+    const { afd, trans } = useLR();
 
     return (
         <div>

@@ -1,61 +1,34 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ProdType } from '~/components/Prod';
 import GrammarContext from '~/contexts/GrammarContext';
-import { calcularPrimeros, calcularSiguientes } from '~/utils/ps';
+import { TableType, calcularPrimeros, calcularSiguientes } from '~/utils/ps';
 
 const useGrammar = () => {
-    const {
-        prods,
-        addProd,
-        resetProd,
-        Vn,
-        addVn,
-        resetVn,
-        Vt,
-        addVt,
-        resetVt,
-        primeros,
-        siguientes,
-        setPrimeros,
-        setSiguientes,
-        ...rest
-    } = useContext(GrammarContext);
+    const grammar = useContext(GrammarContext);
+    const { prods, addProd, resetProd } = grammar;
 
-    useEffect(() => {
-        resetVn();
-        resetVt();
+    // Símbolos terminales y no terminales
+    const [Vn, Vt] = useMemo(() => {
+        const vnSet = new Set(prods.map((p) => p.head));
+        const bodySymbols = new Set(prods.map((p) => p.body).flat());
+        // JS has no set difference ???
+        const vtSet = new Set([...bodySymbols].filter((x) => !vnSet.has(x)));
 
-        const newVn = [] as string[];
-        const newVt = [] as string[];
-        prods.forEach((p) => {
-            if (!newVn.includes(p.head)) newVn.push(p.head);
-        });
-        prods.forEach((p) => {
-            p.body.forEach((v) => {
-                if (!newVn.includes(v) && !newVt.includes(v)) newVt.push(v);
-            });
-        });
-
-        newVn.forEach((v) => addVn(v));
-        newVt.forEach((v) => addVt(v));
-
-        if (prods.some((p) => !Vn.includes(p.head)) || prods.length === 0)
-            return;
+        return [Array.from(vnSet), Array.from(vtSet)];
     }, [prods]);
 
-    useEffect(() => {
-        if (Vn.length == 0 || Vt.length == 0) return;
-        if (prods.some((p) => !Vn.includes(p.head))) return;
-        setPrimeros(calcularPrimeros(prods, Vt, Vn));
-    }, [prods, Vt, Vn]);
+    // Primeros/Siguientes
+    const [primeros, siguientes] = useMemo(() => {
+        if (prods.length === 0 || Vt.length === 0 || Vn.length === 0)
+            return [{}, {}] as [TableType, TableType];
 
-    useEffect(() => {
-        if (Vn.length == 0 || Vt.length == 0) return;
-        if (prods.some((p) => !Vn.includes(p.head))) return;
-        setSiguientes(calcularSiguientes(prods, Vn, primeros));
-    }, [primeros]);
+        const prim = calcularPrimeros(prods, Vt, Vn);
+        const sig = calcularSiguientes(prods, Vn, prim);
 
-    const exportGrammar = () => {
+        return [prim, sig];
+    }, [prods, Vn, Vt]);
+
+    const exportGrammar = useCallback(() => {
         const grammar = {
             prods,
             Vn,
@@ -69,37 +42,29 @@ const useGrammar = () => {
         );
         a.download = 'grammar.json';
         a.click();
-    };
+    }, [prods, Vn, Vt]);
 
-    const importGrammar = (file: File) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const grammar = JSON.parse(reader.result as string);
-            resetVn();
-            resetVt();
-            resetProd();
-            grammar.prods.forEach((p: ProdType) => addProd(p));
-            grammar.Vn.forEach((v: string) => addVn(v));
-            grammar.Vt.forEach((v: string) => addVt(v));
-        };
-        reader.readAsText(file);
-    };
+    const importGrammar = useCallback(
+        (file: File) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const grammar = JSON.parse(reader.result as string);
+                resetProd();
+                grammar.prods.forEach((p: ProdType) => addProd(p));
+            };
+            reader.readAsText(file);
+        },
+        [addProd, resetProd],
+    );
 
     return {
-        prods,
-        addProd,
-        resetProd,
         Vn,
-        addVn,
-        resetVn,
         Vt,
-        addVt,
-        resetVt,
         primeros,
         siguientes,
         exportGrammar,
         importGrammar,
-        ...rest,
+        ...grammar,
     };
 };
 

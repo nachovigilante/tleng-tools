@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
     AFD,
     ActionTableType,
     ItemType,
+    ParsingType,
     TransType,
     calcularTablaAccion,
     parseDesc,
@@ -10,62 +11,35 @@ import {
 import useGrammar from './useGrammar';
 
 const useLR = () => {
-    const {
-        prods,
-        Vt,
-        Vn,
-        siguientes,
-        setAfd,
-        setTrans,
-        setLR0,
-        setSLR,
-        afd,
-        trans,
-        LR0,
-        SLR,
-        LRParsing,
-        setLRParsing,
-    } = useGrammar();
+    const { prods, Vt, Vn, siguientes } = useGrammar();
 
-    useEffect(() => {
+    const [afd, trans] = useMemo(() => {
         if (prods.length === 0 || Vt.length === 0 || Vn.length === 0) {
-            setAfd([] as ItemType[][]);
-            setTrans({} as TransType);
-            return;
+            return [[], {}] as [ItemType[][], TransType];
         }
-        const [afd, goTo] = AFD(prods, Vt, Vn);
 
-        setAfd(afd);
-        setTrans(goTo);
+        return AFD(prods, Vt, Vn);
     }, [prods, Vt, Vn]);
 
-    useEffect(() => {
+    const [LR0, SLR] = useMemo(() => {
         if (prods.length === 0 || afd.length === 0) {
-            setLR0({} as ActionTableType);
-            setSLR({} as ActionTableType);
-            return;
+            return [{} as ActionTableType, {} as ActionTableType];
         }
-        setLR0(calcularTablaAccion(prods, Vt, Vn, afd, trans, siguientes));
-        setSLR(
+
+        return [
+            calcularTablaAccion(prods, Vt, Vn, afd, trans, siguientes),
             calcularTablaAccion(prods, Vt, Vn, afd, trans, siguientes, true),
-        );
-    }, [afd, trans]);
+        ];
+    }, [prods, Vt, Vn, afd, trans, siguientes]);
 
-    const parse = (cadena: string) => {
-        const [afd, trans] = AFD(prods, Vt, Vn);
-        console.log(afd);
-        const tabla = calcularTablaAccion(
-            prods,
-            Vt,
-            Vn,
-            afd,
-            trans,
-            siguientes,
-            true,
-        );
+    const [LRParsing, setLRParsing] = useState({} as ParsingType);
 
-        setLRParsing(parseDesc(cadena, tabla));
-    };
+    const parse = useCallback(
+        (cadena: string) => {
+            setLRParsing(parseDesc(cadena, SLR));
+        },
+        [SLR],
+    );
 
     return {
         afd,

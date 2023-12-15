@@ -16,6 +16,7 @@ export const Productions = () => {
                                 updateProd={(prod: ProdType) =>
                                     updateProd(index, prod)
                                 }
+                                deleteProd={() => removeProd(index)}
                                 prod={p}
                             />
                         );

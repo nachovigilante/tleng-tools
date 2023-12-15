@@ -1,12 +1,10 @@
 'use client';
 import { useState } from 'react';
-import useGrammar from '~/hooks/useGrammar';
 import useLR from '~/hooks/useLR';
 import { showAction } from '~/utils/LR';
 
 export const Parse = () => {
-    const { afd } = useGrammar();
-    const { parse, LRParsing } = useLR();
+    const { parse, LRParsing, afd } = useLR();
     const [cadena, setCadena] = useState('' as string);
 
     return (

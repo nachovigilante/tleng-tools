@@ -7,18 +7,25 @@ const useGrammar = () => {
     const grammarCtx = useContext(GrammarContext);
     const { prods, addProd, resetProd } = grammarCtx;
 
+    const standardizedProds = useMemo(() => {
+        return prods.map((p) => {
+            const body = p.body.map((s) => s.replace(/λ/g, 'ε'));
+            return { ...p, body };
+        });
+    }, [prods]);
+
     // Símbolos terminales y no terminales
     const [Vn, Vt] = useMemo(() => {
-        const vnSet = new Set(prods.map((p) => p.head));
-        const bodySymbols = new Set(prods.map((p) => p.body).flat());
+        const vnSet = new Set(standardizedProds.map((p) => p.head));
+        const bodySymbols = new Set(standardizedProds.map((p) => p.body).flat());
         const vtSet = new Set([...bodySymbols].filter((x) => !vnSet.has(x)));
 
         return [vnSet, vtSet];
-    }, [prods]);
+    }, [standardizedProds]);
 
     const cfg = useMemo(() => {
-        return new CFG(Vn, Vt, prods, Vn.values().next().value);
-    }, [prods, Vn, Vt]);
+        return new CFG(Vn, Vt, standardizedProds, Vn.values().next().value);
+    }, [standardizedProds, Vn, Vt]);
 
     const exportGrammar = useCallback(() => {
         const grammar = {

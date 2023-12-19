@@ -8,6 +8,9 @@ export const Afd = () => {
     const { Vn, Vt } = useGrammar();
     const { afd, trans } = useLR();
 
+    const VnArray = Array.from(Vn);
+    const VtArray = Array.from(Vt);
+
     return (
         <div>
             {afd.length > 0 && (
@@ -50,7 +53,7 @@ export const Afd = () => {
                                     <th className="px-4 py-2 border bg-blue-500 text-white">
                                         Estado
                                     </th>
-                                    {Vn.concat(Vt).map((v, i) => (
+                                    {VnArray.concat(VtArray).map((v, i) => (
                                         <th
                                             className="px-4 py-2 border bg-blue-500 text-white"
                                             key={i}
@@ -66,7 +69,7 @@ export const Afd = () => {
                                         <td className="border px-4 py-2 text-center">
                                             {index}
                                         </td>
-                                        {Vn.concat(Vt).map((v, i) => (
+                                        {VnArray.concat(VtArray).map((v, i) => (
                                             <td
                                                 className={twMerge(
                                                     'border px-4 py-2 text-center',

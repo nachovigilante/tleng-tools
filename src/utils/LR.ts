@@ -1,8 +1,8 @@
-import { ProdType } from "~/components/Prod";
-import { TableType } from "./ps";
+import { Production } from 'formal-language-tools';
+import { TableType } from './ps';
 
 export type ItemType = {
-    prod: ProdType;
+    prod: Production;
     index: number;
 };
 
@@ -21,7 +21,7 @@ export const showItem = (item: ItemType) => {
     );
 };
 
-export const calcularClausuraItem = (item: ItemType, prods: ProdType[]) => {
+export const calcularClausuraItem = (item: ItemType, prods: Production[]) => {
     const {
         prod: { head, body },
         index,
@@ -61,7 +61,7 @@ export const calcularClausuraItem = (item: ItemType, prods: ProdType[]) => {
 
 export const calcularClausuraConjItems = (
     items: ItemType[],
-    prods: ProdType[],
+    prods: Production[],
 ) => {
     const result = [] as ItemType[];
     items.forEach((item) => {
@@ -90,7 +90,7 @@ export const calcularClausuraConjItems = (
 export const calcularTransicion = (
     items: ItemType[],
     simbolo: string,
-    prods: ProdType[],
+    prods: Production[],
 ) => {
     const result = [] as ItemType[];
     items.forEach((item) => {
@@ -106,7 +106,7 @@ export const calcularTransicion = (
 };
 
 export const AFD = (
-    prods: ProdType[],
+    prods: Production[],
     Vt: string[],
     Vn: string[],
 ): [
@@ -174,7 +174,7 @@ export type ActionType =
       }
     | {
           accion: 'reduce';
-          payload: ProdType;
+          payload: Production;
       }
     | {
           accion: 'accept';
@@ -187,7 +187,7 @@ export type ActionTableType = {
 };
 
 export const calcularTablaAccion = (
-    prods: ProdType[],
+    prods: Production[],
     Vt: string[],
     Vn: string[],
     estados: ItemType[][],
@@ -327,9 +327,12 @@ export type ParsingType = {
         input: string[];
         action: ActionType;
     }[];
-}
+};
 
-export const parseDesc = (cadena: string, table: ActionTableType): ParsingType => {
+export const parseDesc = (
+    cadena: string,
+    table: ActionTableType,
+): ParsingType => {
     const stack = [] as number[];
     const input = cadena.split(' ');
     input.push('$');

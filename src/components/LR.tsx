@@ -40,34 +40,43 @@ export const LR = () => {
                         <thead>
                             <tr>
                                 <th>Estado</th>
-                                {Vt.concat(['$']).map((v, i) => (
-                                    <th key={i}>{v}</th>
-                                ))}
+                                {Array.from(Vt)
+                                    .concat(['$'])
+                                    .map((v, i) => (
+                                        <th key={i}>{v}</th>
+                                    ))}
                             </tr>
                         </thead>
                         <tbody>
                             {Object.keys(tabla).map((_, i) => (
                                 <tr key={i}>
                                     <td className="text-center">{i}</td>
-                                    {Vt.concat(['$']).map((v, j) => (
-                                        <td
-                                            className={twMerge(
-                                                tabla[i][v].length > 1 &&
-                                                    'bg-red-300 border-red-400 border-2',
-                                            )}
-                                            key={j}
-                                        >
-                                            <div className="flex flex-col justify-center items-center">
-                                                {tabla[i] &&
-                                                    tabla[i][v].length > 0 &&
-                                                    tabla[i][v].map((e, k) => (
-                                                        <p key={k}>
-                                                            {showAction(e)}
-                                                        </p>
-                                                    ))}
-                                            </div>
-                                        </td>
-                                    ))}
+                                    {Array.from(Vt)
+                                        .concat(['$'])
+                                        .map((v, j) => (
+                                            <td
+                                                className={twMerge(
+                                                    tabla[i][v].length > 1 &&
+                                                        'bg-red-300 border-red-400 border-2',
+                                                )}
+                                                key={j}
+                                            >
+                                                <div className="flex flex-col justify-center items-center">
+                                                    {tabla[i] &&
+                                                        tabla[i][v].length >
+                                                            0 &&
+                                                        tabla[i][v].map(
+                                                            (e, k) => (
+                                                                <p key={k}>
+                                                                    {showAction(
+                                                                        e,
+                                                                    )}
+                                                                </p>
+                                                            ),
+                                                        )}
+                                                </div>
+                                            </td>
+                                        ))}
                                 </tr>
                             ))}
                         </tbody>

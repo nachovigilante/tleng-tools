@@ -36,8 +36,8 @@ export const Alphabets = () => {
     return (
         <div className="flex flex-col text-2xl gap-3">
             <h2 className="text-3xl mb-2">Símbolos</h2>
-            <Alphabet symbols={Vn} id="N" />
-            <Alphabet symbols={Vt} id="T" />
+            <Alphabet symbols={Array.from(Vn)} id="N" />
+            <Alphabet symbols={Array.from(Vt)} id="T" />
         </div>
     );
 };

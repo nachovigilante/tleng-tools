@@ -1,10 +1,10 @@
-import { ProdType } from "~/components/Prod";
+import { Production } from "formal-language-tools";
 
 export type TableType = {
     [key: string]: string[];
 };
 
-export const calcularPrimeros = (P: ProdType[], Vt: string[], Vn: string[]) => {
+export const calcularPrimeros = (P: Production[], Vt: string[], Vn: string[]) => {
     const primeros = {} as TableType;
     Vn.forEach((v) => {
         primeros[v] = [];
@@ -66,7 +66,7 @@ export const primeros_de = (cadena: string[], primeros: TableType) => {
 };
 
 export const calcularSiguientes = (
-    P: ProdType[],
+    P: Production[],
     Vn: string[],
     primeros: TableType,
 ) => {

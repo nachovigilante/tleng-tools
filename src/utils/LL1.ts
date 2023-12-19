@@ -1,4 +1,4 @@
-import { ProdType } from '~/components/Prod';
+import { Production } from 'formal-language-tools';
 import { TableType, primeros_de } from './ps';
 
 export type Table2DType = {
@@ -8,7 +8,7 @@ export type Table2DType = {
 };
 
 export const calcularSD = (
-    P: ProdType[],
+    P: Production[],
     primeros: TableType,
     siguientes: TableType,
 ) => {
@@ -17,6 +17,7 @@ export const calcularSD = (
     P.forEach(({ head, body }) => {
         const key = `${head} --> ${body.join(' ')}`;
         const prim = primeros_de(body, primeros);
+        console.log(body, prim);
         if (prim.includes('λ')) prim.push(...siguientes[head]);
         sd[key] = prim.filter((i) => i != 'λ');
     });

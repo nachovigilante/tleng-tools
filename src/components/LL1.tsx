@@ -8,6 +8,9 @@ export const LL1 = () => {
     const { Vt, Vn } = useGrammar();
     const { ll1 } = useLL1();
 
+    const VnArray = Array.from(Vn);
+    const VtArray = Array.from(Vt);
+
     return (
         <>
             {Object.keys(ll1).length > 0 ? (
@@ -17,14 +20,14 @@ export const LL1 = () => {
                         <thead>
                             <tr>
                                 <th>Símbolo</th>
-                                {Vt.concat('$').map((v) => (
+                                {VtArray.concat('$').map((v) => (
                                     <th key={v}>{v}</th>
                                 ))}
                             </tr>
-                            {Vn.map((v) => (
+                            {VnArray.map((v) => (
                                 <tr key={v}>
                                     <td>{v}</td>
-                                    {Vt.concat('$').map((t) => (
+                                    {VtArray.concat('$').map((t) => (
                                         <td
                                             className={twMerge(
                                                 ll1[v] &&

@@ -1,5 +1,6 @@
 'use client';
-import { Prod, ProdType } from './Prod';
+import { Production } from 'formal-language-tools';
+import { Prod } from './Prod';
 import useGrammar from '~/hooks/useGrammar';
 
 export const Productions = () => {
@@ -13,7 +14,7 @@ export const Productions = () => {
                         return (
                             <Prod
                                 key={index}
-                                updateProd={(prod: ProdType) =>
+                                updateProd={(prod: Production) =>
                                     updateProd(index, prod)
                                 }
                                 deleteProd={() => removeProd(index)}

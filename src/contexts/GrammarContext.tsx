@@ -1,11 +1,11 @@
+import { Production } from 'formal-language-tools';
 import { ReactNode, createContext, useReducer } from 'react';
-import { ProdType } from '~/components/Prod';
 
 export type Grammar = {
-    prods: ProdType[];
-    addProd: (prod: ProdType) => void;
+    prods: Production[];
+    addProd: (prod: Production) => void;
     removeProd: (index: number) => void;
-    updateProd: (index: number, prod: ProdType) => void;
+    updateProd: (index: number, prod: Production) => void;
     resetProd: () => void;
 };
 
@@ -20,10 +20,10 @@ const GrammarContext = createContext({
 export const GrammarProvider = ({ children }: { children: ReactNode }) => {
     const [prods, dispatch] = useReducer(
         (
-            state: ProdType[],
+            state: Production[],
             action: {
                 type: 'add' | 'remove' | 'update' | 'reset';
-                payload: { index: number; prod?: ProdType };
+                payload: { index: number; prod?: Production };
             },
         ) => {
             switch (action.type) {
@@ -48,10 +48,10 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
                 head: '',
                 body: [],
             },
-        ] as ProdType[],
+        ] as Production[],
     );
 
-    const addProd = (prod: ProdType) => {
+    const addProd = (prod: Production) => {
         dispatch({ type: 'add', payload: { prod, index: -1 } });
     };
 
@@ -59,7 +59,7 @@ export const GrammarProvider = ({ children }: { children: ReactNode }) => {
         dispatch({ type: 'remove', payload: { index } });
     };
 
-    const updateProd = (index: number, prod: ProdType) => {
+    const updateProd = (index: number, prod: Production) => {
         dispatch({ type: 'update', payload: { index, prod } });
     };
 

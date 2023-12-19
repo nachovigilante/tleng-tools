@@ -1,31 +1,23 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ProdType } from '~/components/Prod';
+import { Production } from 'formal-language-tools';
+import { useCallback, useContext, useMemo } from 'react';
 import GrammarContext from '~/contexts/GrammarContext';
-import { TableType, calcularPrimeros, calcularSiguientes } from '~/utils/ps';
+import { CFG } from 'formal-language-tools';
 
 const useGrammar = () => {
-    const grammar = useContext(GrammarContext);
-    const { prods, addProd, resetProd } = grammar;
+    const grammarCtx = useContext(GrammarContext);
+    const { prods, addProd, resetProd } = grammarCtx;
 
     // Símbolos terminales y no terminales
     const [Vn, Vt] = useMemo(() => {
         const vnSet = new Set(prods.map((p) => p.head));
         const bodySymbols = new Set(prods.map((p) => p.body).flat());
-        // JS has no set difference ???
         const vtSet = new Set([...bodySymbols].filter((x) => !vnSet.has(x)));
 
-        return [Array.from(vnSet), Array.from(vtSet)];
+        return [vnSet, vtSet];
     }, [prods]);
 
-    // Primeros/Siguientes
-    const [primeros, siguientes] = useMemo(() => {
-        if (prods.length === 0 || Vt.length === 0 || Vn.length === 0)
-            return [{}, {}] as [TableType, TableType];
-
-        const prim = calcularPrimeros(prods, Vt, Vn);
-        const sig = calcularSiguientes(prods, Vn, prim);
-
-        return [prim, sig];
+    const cfg = useMemo(() => {
+        return new CFG(Vn, Vt, prods, Vn.values().next().value);
     }, [prods, Vn, Vt]);
 
     const exportGrammar = useCallback(() => {
@@ -50,7 +42,7 @@ const useGrammar = () => {
             reader.onload = () => {
                 const grammar = JSON.parse(reader.result as string);
                 resetProd();
-                grammar.prods.forEach((p: ProdType) => addProd(p));
+                grammar.prods.forEach((p: Production) => addProd(p));
             };
             reader.readAsText(file);
         },
@@ -60,11 +52,11 @@ const useGrammar = () => {
     return {
         Vn,
         Vt,
-        primeros,
-        siguientes,
+        primeros: cfg.firstMap,
+        siguientes: cfg.followMap,
         exportGrammar,
         importGrammar,
-        ...grammar,
+        ...grammarCtx,
     };
 };
 

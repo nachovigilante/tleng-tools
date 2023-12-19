@@ -1,38 +1,33 @@
 'use client';
-import { useEffect, useReducer, useRef, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
+import { useRef, useState } from 'react';
+import { Production } from 'formal-language-tools';
 
-export type ProdType = {
-    head: string;
-    body: string[];
-};
-
-const GrabbingDots = () => {
-    return (
-        <div className="w-5 flex flex-col gap-1">
-            <div className="flex items-center gap-1">
-                <div className="rounded-full bg-gray-300 w-1 h-1" />
-                <div className="rounded-full bg-gray-300 w-1 h-1" />
-            </div>
-            <div className="flex items-center gap-1">
-                <div className="rounded-full bg-gray-300 w-1 h-1" />
-                <div className="rounded-full bg-gray-300 w-1 h-1" />
-            </div>
-            <div className="flex items-center gap-1">
-                <div className="rounded-full bg-gray-300 w-1 h-1" />
-                <div className="rounded-full bg-gray-300 w-1 h-1" />
-            </div>
-        </div>
-    );
-};
+// const GrabbingDots = () => {
+//     return (
+//         <div className="w-5 flex flex-col gap-1">
+//             <div className="flex items-center gap-1">
+//                 <div className="rounded-full bg-gray-300 w-1 h-1" />
+//                 <div className="rounded-full bg-gray-300 w-1 h-1" />
+//             </div>
+//             <div className="flex items-center gap-1">
+//                 <div className="rounded-full bg-gray-300 w-1 h-1" />
+//                 <div className="rounded-full bg-gray-300 w-1 h-1" />
+//             </div>
+//             <div className="flex items-center gap-1">
+//                 <div className="rounded-full bg-gray-300 w-1 h-1" />
+//                 <div className="rounded-full bg-gray-300 w-1 h-1" />
+//             </div>
+//         </div>
+//     );
+// };
 
 export const Prod = ({
     prod,
     updateProd,
     deleteProd,
 }: {
-    prod: ProdType;
-    updateProd: (prod: ProdType) => void;
+    prod: Production;
+    updateProd: (prod: Production) => void;
     deleteProd: () => void;
 }) => {
     const [head, setHead] = useState(prod.head);
@@ -41,10 +36,6 @@ export const Prod = ({
 
     const [editing, setEditing] = useState(false);
     const bodyRef = useRef<HTMLInputElement>(null);
-
-    // useEffect(() => {
-    //     console.log(editing);
-    // }, [editing]);
 
     const handleChange = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
